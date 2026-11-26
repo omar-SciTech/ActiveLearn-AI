@@ -11,7 +11,9 @@ course project at the Faculty of Computers & AI, Benha University, and entered i
 > to answer each question and chapter correctly. The next question is chosen mostly from the weak chapters, at a difficulty
 > that fits the student's level. Students and instructors get reports.
 
-### 🌐 Live demo: https://omarscitech.pythonanywhere.com
+**🌐 Live demo:** https://omarscitech.pythonanywhere.com &nbsp;·&nbsp; **▶️ Demo video (2 min):** https://youtu.be/dbNEImDmta8
+
+[![Watch the 2-minute demo](docs/demo_thumbnail.jpg)](https://youtu.be/dbNEImDmta8)
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![Flask](https://img.shields.io/badge/Flask-3.1-black)
 ![SQLite](https://img.shields.io/badge/SQLite-8%20tables-lightgrey) ![PyTorch](https://img.shields.io/badge/PyTorch-DKT%20%7C%20SAKT-red)
@@ -28,6 +30,17 @@ test set = students the model never saw:
 | Best simple baseline (recency formula) | 0.701 | – |
 
 Training curves and all metrics: [`model/results/`](model/results). Details: [`model/README.md`](model/README.md).
+
+## Screenshots
+| Sign in | Student dashboard |
+|---|---|
+| ![Sign in](docs/screenshots/01_sign_in.jpg) | ![Student dashboard](docs/screenshots/03_student_dashboard.jpg) |
+| **Adaptive quiz with instant feedback** | **Personal reports** |
+| ![Adaptive quiz](docs/screenshots/04_adaptive_quiz.jpg) | ![Reports](docs/screenshots/05_reports.jpg) |
+| **Instructor: class dashboard** | **Instructor: question bank** |
+| ![Instructor dashboard](docs/screenshots/07_instructor_dashboard.jpg) | ![Question bank](docs/screenshots/08_instructor_question_bank.jpg) |
+| **Sign up** | **Arabic interface, light theme** |
+| ![Sign up](docs/screenshots/02_sign_up.jpg) | ![Arabic](docs/screenshots/06_arabic_light.jpg) |
 
 ## Features
 - **Students:** dashboard with AI mastery per chapter, adaptive quiz with explanations, question bank with search & filters, personal reports.
@@ -64,6 +77,7 @@ ActiveLearn_AI/
 ├── model/           PyTorch: dkt.py (DKT, DKT-Q, SAKT), prepare_data.py, train.py, predictor.py, results/, saved/
 │                    predictor_np.py + export_numpy.py: the same model without PyTorch (for hosting)
 ├── deploy/          PythonAnywhere WSGI file and hosting guide
+├── docs/            screenshots and the demo-video thumbnail
 └── requirements.txt
 ```
 Every folder has its own README.

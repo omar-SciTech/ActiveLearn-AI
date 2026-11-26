@@ -888,8 +888,8 @@
         <section id="page-bank" class="hidden">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title" id="bank-heading">بنك الأسئلة</h3>
-              <button id="btn-open-add-q" onclick="openQuestionModal()" class="btn-primary hidden">+ إضافة سؤال</button>
+              <h3 class="card-title" id="bank-heading" data-i18n="navBank">بنك الأسئلة</h3>
+              <button id="btn-open-add-q" onclick="openQuestionModal()" class="btn-primary hidden" data-i18n="btnAddQ">+ إضافة سؤال</button>
             </div>
             <div class="filter-bar">
               <input type="text" id="search-input" oninput="renderQuestionBank()" placeholder="ابحث في نص السؤال..." class="field-control" />
@@ -953,11 +953,11 @@
         <input type="hidden" id="edit-q-id" />
         <div class="grid-2 form-group">
           <div>
-            <label class="form-label">الفصل (Topic)</label>
+            <label class="form-label" data-i18n="qfTopic">الفصل</label>
             <select id="q-form-topic" class="field-control"></select>
           </div>
           <div>
-            <label class="form-label">الصعوبة (Difficulty)</label>
+            <label class="form-label" data-i18n="qfDifficulty">الصعوبة</label>
             <select id="q-form-difficulty" class="field-control">
               <option value="Easy">Easy</option>
               <option value="Medium" selected>Medium</option>
@@ -967,36 +967,36 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">نص السؤال</label>
+          <label class="form-label" data-i18n="qfBody">نص السؤال</label>
           <textarea id="q-form-body" rows="2" class="field-control" required></textarea>
         </div>
 
         <div class="grid-2 form-group">
-          <div><label class="form-label">الاختيار 1</label><input id="q-opt-0" class="field-control" required /></div>
-          <div><label class="form-label">الاختيار 2</label><input id="q-opt-1" class="field-control" required /></div>
-          <div><label class="form-label">الاختيار 3</label><input id="q-opt-2" class="field-control" required /></div>
-          <div><label class="form-label">الاختيار 4</label><input id="q-opt-3" class="field-control" required /></div>
+          <div><label class="form-label" data-i18n="qfOpt1">الاختيار 1</label><input id="q-opt-0" class="field-control" required /></div>
+          <div><label class="form-label" data-i18n="qfOpt2">الاختيار 2</label><input id="q-opt-1" class="field-control" required /></div>
+          <div><label class="form-label" data-i18n="qfOpt3">الاختيار 3</label><input id="q-opt-2" class="field-control" required /></div>
+          <div><label class="form-label" data-i18n="qfOpt4">الاختيار 4</label><input id="q-opt-3" class="field-control" required /></div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">شرح الإجابة (اختياري)</label>
+          <label class="form-label" data-i18n="qfExpl">شرح الإجابة (اختياري)</label>
           <textarea id="q-form-expl" rows="2" class="field-control"></textarea>
         </div>
 
         <div class="form-group">
-          <label class="form-label">الإجابة الصحيحة</label>
+          <label class="form-label" data-i18n="qfCorrect">الإجابة الصحيحة</label>
           <select id="q-form-correct" class="field-control">
-            <option value="0">الاختيار 1</option>
-            <option value="1">الاختيار 2</option>
-            <option value="2">الاختيار 3</option>
-            <option value="3">الاختيار 4</option>
+            <option value="0" data-i18n="qfOpt1">الاختيار 1</option>
+            <option value="1" data-i18n="qfOpt2">الاختيار 2</option>
+            <option value="2" data-i18n="qfOpt3">الاختيار 3</option>
+            <option value="3" data-i18n="qfOpt4">الاختيار 4</option>
           </select>
         </div>
 
         <div id="modal-error" class="auth-error hidden"></div>
         <div class="action-bar">
-          <button type="button" onclick="closeQuestionModal()" class="btn-ghost">إلغاء</button>
-          <button type="submit" class="btn-primary">حفظ السؤال</button>
+          <button type="button" onclick="closeQuestionModal()" class="btn-ghost" data-i18n="btnCancel">إلغاء</button>
+          <button type="submit" class="btn-primary" data-i18n="btnSaveQ">حفظ السؤال</button>
         </div>
       </form>
     </div>
@@ -1128,6 +1128,9 @@
         attemptsSuffix: "إجابة",
         noData: "مفيش إجابات في الفترة دي لسه.",
         modalAdd: "إضافة سؤال جديد",
+        btnAddQ: "+ إضافة سؤال", qfTopic: "الفصل", qfDifficulty: "الصعوبة", qfBody: "نص السؤال",
+        qfOpt1: "الاختيار 1", qfOpt2: "الاختيار 2", qfOpt3: "الاختيار 3", qfOpt4: "الاختيار 4",
+        qfExpl: "شرح الإجابة (اختياري)", qfCorrect: "الإجابة الصحيحة", btnCancel: "إلغاء", btnSaveQ: "حفظ السؤال",
         modalEdit: "تعديل السؤال",
         btnEdit: "تعديل",
         btnDelete: "حذف",
@@ -1236,6 +1239,9 @@
         attemptsSuffix: "answers",
         noData: "No answers in this period yet.",
         modalAdd: "Add a new question",
+        btnAddQ: "+ Add question", qfTopic: "Chapter", qfDifficulty: "Difficulty", qfBody: "Question text",
+        qfOpt1: "Option 1", qfOpt2: "Option 2", qfOpt3: "Option 3", qfOpt4: "Option 4",
+        qfExpl: "Explanation (optional)", qfCorrect: "Correct answer", btnCancel: "Cancel", btnSaveQ: "Save question",
         modalEdit: "Edit question",
         btnEdit: "Edit",
         btnDelete: "Delete",
@@ -1810,6 +1816,7 @@
       set("lbl-su-pass", t.lblSuPass);
       set("lbl-su-pass2", t.lblSuPass2);
       set("btn-signup", t.btnSignup);
+      document.querySelectorAll("[data-i18n]").forEach((el) => { if (t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n]; });
       syncRoleFields();
       set("sidebar-companion-text", t.sidebarCompanion);
       set("sidebar-status-title", t.sidebarStatusTitle(modelLabel));
