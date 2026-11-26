@@ -11,6 +11,8 @@ course project at the Faculty of Computers & AI, Benha University, and entered i
 > to answer each question and chapter correctly. The next question is chosen mostly from the weak chapters, at a difficulty
 > that fits the student's level. Students and instructors get reports.
 
+### 🌐 Live demo: https://omarscitech.pythonanywhere.com
+
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue) ![Flask](https://img.shields.io/badge/Flask-3.1-black)
 ![SQLite](https://img.shields.io/badge/SQLite-8%20tables-lightgrey) ![PyTorch](https://img.shields.io/badge/PyTorch-DKT%20%7C%20SAKT-red)
 
@@ -47,7 +49,7 @@ Without `torch` the app runs the numpy copy of the same model (`numpy` is needed
 |---|---|
 | Student (demo) | any name + `ahmed.is201@university.edu` + code `password123` |
 | New student | your name + any university email + a code you choose (4+ characters) → the account is created |
-| Instructor | name `Dr. Instructor` + code `password123` (no email) |
+| Instructor | name `Dr. Instructor` + code `password123` (no email) – on your own computer; the live site's instructor code is kept by the team |
 
 ## Folder structure
 ```

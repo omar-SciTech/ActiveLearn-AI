@@ -32,5 +32,5 @@ cd ~/ActiveLearn-AI && git pull
 then **Reload** on the Web tab. The live database is in `~/activelearn_data/` and is not touched by `git pull`.
 
 ## Keep it online
-Free web apps stop if they are not renewed: PythonAnywhere e-mails a reminder before the date, then log in
-and press the **"Run until … from today"** button on the Web tab.
+Free web apps must be renewed once a month: log in and press **"Run until 1 month from today"** on the Web tab
+(PythonAnywhere e-mails a reminder a week before the site is disabled).
