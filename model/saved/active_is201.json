@@ -1,0 +1,4 @@
+{
+ "model": "dktq-gru",
+ "val_auc": 0.7953
+}

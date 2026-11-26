@@ -1,0 +1,4 @@
+time,model,val_auc,test_auc,test_accuracy,epochs,emb,hidden,dropout,lr,batch,weight_decay,max_len,heads,base_skill_auc,base_question_auc,base_recency_auc
+2026-11-25 20:16,dkt-gru,0.7694,0.7587,0.7342,22,64,128,0.3,0.001,64,1e-05,100,,0.6279,0.6966,0.7006
+2026-11-25 20:17,dktq-gru,0.7827,0.7756,0.7406,20,64,128,0.3,0.001,64,1e-05,100,,0.6279,0.6966,0.7006
+2026-11-25 20:18,sakt,0.767,0.7565,0.7293,25,64,128,0.3,0.001,64,1e-05,100,4,0.6279,0.6966,0.7006

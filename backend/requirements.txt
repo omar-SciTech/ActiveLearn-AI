@@ -1,0 +1,5 @@
+Flask==3.1.*
+itsdangerous
+werkzeug
+# optional: the AI model (without it the app uses a simple formula)
+torch

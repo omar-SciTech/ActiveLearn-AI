@@ -1,0 +1,84 @@
+digraph ERD {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", pad=0.4, nodesep=0.5, ranksep=1.1, label="ActiveLearn AI - Entity Relationship Diagram (crow's foot)", labelloc=t, fontsize=20];
+  node  [shape=plaintext, fontname="Helvetica", fontsize=11];
+  edge  [fontname="Helvetica", fontsize=10, arrowhead=crow, arrowtail=tee, dir=both, color="#334155"];
+
+  users [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1e3a8a"><FONT COLOR="white"><B>users</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK</B> user_id</TD></TR>
+    <TR><TD ALIGN="LEFT">full_name</TD></TR>
+    <TR><TD ALIGN="LEFT">email (UNIQUE)</TD></TR>
+    <TR><TD ALIGN="LEFT">password_hash</TD></TR>
+    <TR><TD ALIGN="LEFT">role (student/instructor)</TD></TR>
+    <TR><TD ALIGN="LEFT">created_at</TD></TR></TABLE>>];
+
+  courses [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1e3a8a"><FONT COLOR="white"><B>courses</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK</B> course_id</TD></TR>
+    <TR><TD ALIGN="LEFT">code (UNIQUE)</TD></TR>
+    <TR><TD ALIGN="LEFT">title</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> instructor_id</TD></TR></TABLE>>];
+
+  enrollments [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#0f766e"><FONT COLOR="white"><B>enrollments</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK, FK</B> user_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK, FK</B> course_id</TD></TR>
+    <TR><TD ALIGN="LEFT">enrolled_at</TD></TR></TABLE>>];
+
+  topics [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1e3a8a"><FONT COLOR="white"><B>topics</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK</B> topic_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> course_id</TD></TR>
+    <TR><TD ALIGN="LEFT">chapter_no</TD></TR>
+    <TR><TD ALIGN="LEFT">name</TD></TR></TABLE>>];
+
+  questions [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1e3a8a"><FONT COLOR="white"><B>questions</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK</B> question_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> topic_id</TD></TR>
+    <TR><TD ALIGN="LEFT">body</TD></TR>
+    <TR><TD ALIGN="LEFT">option_a ... option_d</TD></TR>
+    <TR><TD ALIGN="LEFT">correct_option</TD></TR>
+    <TR><TD ALIGN="LEFT">difficulty (easy/medium/hard)</TD></TR>
+    <TR><TD ALIGN="LEFT">explanation</TD></TR></TABLE>>];
+
+  quiz_sessions [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1e3a8a"><FONT COLOR="white"><B>quiz_sessions</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK</B> session_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> user_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> course_id</TD></TR>
+    <TR><TD ALIGN="LEFT">mode (adaptive/random)</TD></TR>
+    <TR><TD ALIGN="LEFT">started_at</TD></TR>
+    <TR><TD ALIGN="LEFT">ended_at</TD></TR></TABLE>>];
+
+  attempts [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1e3a8a"><FONT COLOR="white"><B>attempts</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK</B> attempt_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> session_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> user_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> question_id</TD></TR>
+    <TR><TD ALIGN="LEFT">selected_option</TD></TR>
+    <TR><TD ALIGN="LEFT">is_correct</TD></TR>
+    <TR><TD ALIGN="LEFT">time_taken_sec</TD></TR>
+    <TR><TD ALIGN="LEFT">created_at</TD></TR></TABLE>>];
+
+  topic_mastery [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#0f766e"><FONT COLOR="white"><B>topic_mastery</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK, FK</B> user_id</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK, FK</B> topic_id</TD></TR>
+    <TR><TD ALIGN="LEFT">p_correct (0-1)</TD></TR>
+    <TR><TD ALIGN="LEFT">updated_at</TD></TR></TABLE>>];
+
+  users -> enrollments [label="enrolls"];
+  courses -> enrollments [label="has"];
+  users -> courses [label="teaches", style=dashed];
+  courses -> topics [label="contains"];
+  topics -> questions [label="groups"];
+  users -> quiz_sessions [label="starts"];
+  courses -> quiz_sessions [label="is practiced in"];
+  quiz_sessions -> attempts [label="records"];
+  users -> attempts [label="makes"];
+  questions -> attempts [label="answered in"];
+  users -> topic_mastery [label="has"];
+  topics -> topic_mastery [label="measured for"];
+}
