@@ -26,6 +26,11 @@ from the weakest chapter and says "Review Chapter X".
 | `saved/` | `<model>_<dataset>.pt` + `_meta.json`; `active_is201.json` = the model the app uses |
 | `results/` | `comparison_<dataset>.csv` (one row per run), `metrics_…json`, `training_curves_…png`, `test_predictions_…csv`, `is201_student_predictions.csv`, `is201_question_predictions.csv` |
 
+## Running without PyTorch
+`export_numpy.py` copies the weights of the DKT / DKT-Q models into `saved/*.npz` (train.py does it automatically
+for the model the app uses). `predictor_np.py` runs the same forward pass with numpy only; its predictions match
+PyTorch to within 1e-6. The backend uses it automatically when PyTorch is not installed (e.g. on free hosting).
+
 ## Datasets
 | Dataset | Data | Why |
 |---|---|---|

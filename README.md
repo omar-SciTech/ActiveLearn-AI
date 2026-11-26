@@ -41,7 +41,7 @@ Training curves and all metrics: [`model/results/`](model/results). Details: [`m
    Keep the black window open while you use the app.
 
 Other systems: `pip install flask itsdangerous werkzeug` then `python backend/app.py`.
-The AI model needs `torch`; without it the app falls back to a simple formula and still works.
+Without `torch` the app runs the numpy copy of the same model (`numpy` is needed).
 
 | Login as | Fields |
 |---|---|
@@ -58,6 +58,8 @@ ActiveLearn_AI/
 ├── database/        schema.sql (8 tables), data.sql (6 chapters + 60 questions), check.sql, ERD, student simulator
 ├── analysis/        reports.sql (13 reports), make_charts.py → charts/, export_for_ai.py
 ├── model/           PyTorch: dkt.py (DKT, DKT-Q, SAKT), prepare_data.py, train.py, predictor.py, results/, saved/
+│                    predictor_np.py + export_numpy.py: the same model without PyTorch (for hosting)
+├── deploy/          PythonAnywhere WSGI file and hosting guide
 └── requirements.txt
 ```
 Every folder has its own README.
@@ -104,8 +106,10 @@ cd ..\analysis && python make_charts.py
 cd ..\backend && python test_api.py    # tests every endpoint (prints ALL OK)
 ```
 
-## Before hosting publicly
-Set an environment variable `SECRET_KEY` to a long random value and change the demo codes (`password123`).
+## Hosting
+Step-by-step guide for a free permanent link on PythonAnywhere: [`deploy/README.md`](deploy/README.md).
+The hosted site runs the numpy copy of the trained model (`model/predictor_np.py`, same predictions as PyTorch),
+creates its own random `SECRET_KEY`, and keeps its database outside the git folder.
 
 ## Team Inception
 | Member | Role |

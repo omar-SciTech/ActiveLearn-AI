@@ -5,8 +5,8 @@ predict_mastery(history, topic_ids) -> {topic_id: P(correct)}
     topic_ids: the chapters of the course
 
 It uses the IS201 model chosen in model/saved/active_is201.json (the one with the best validation
-AUC: DKT, DKT-Q or SAKT). If PyTorch or the model files are missing it falls back to a simple
-recency-weighted accuracy, so the app always works.
+AUC: DKT, DKT-Q or SAKT). Without PyTorch it runs the numpy copy of the model (model/predictor_np.py);
+if the model files are missing it falls back to a simple recency-weighted accuracy, so the app always works.
 """
 import os, sys
 
@@ -22,10 +22,15 @@ MODEL_NAME = "fallback formula"
 try:                                            # load the model once, when the server starts
     if os.path.exists(os.path.join(MODEL_DIR, "saved", "active_is201.json")):
         sys.path.insert(0, MODEL_DIR)
-        from predictor import Predictor
-        _predictor = Predictor()
+        try:
+            from predictor import Predictor          # PyTorch version
+            _predictor = Predictor()
+        except ImportError:                          # no PyTorch (e.g. free hosting) -> same model in numpy
+            from predictor_np import NumpyPredictor
+            _predictor = NumpyPredictor()
+            print("[mastery] PyTorch not installed, using the numpy copy of the model")
         MODEL_ACTIVE, MODEL_NAME = True, _predictor.name
-except Exception as e:                          # e.g. torch not installed
+except Exception as e:                          # e.g. no model files
     print("[mastery] model not loaded, using fallback formula:", e)
 
 

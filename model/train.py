@@ -212,6 +212,8 @@ def activate_if_best(name, val_auc):
     if cur is None or cur["model"] == name or val_auc >= cur["val_auc"]:
         json.dump({"model": name, "val_auc": round(val_auc, 4)}, open(path, "w"), indent=1)
         print(f"-> the app now uses {name} (validation AUC {val_auc:.4f})")
+        from export_numpy import export          # numpy copy for hosting without PyTorch
+        export(name)
     else:
         print(f"-> the app keeps {cur['model']} (validation AUC {cur['val_auc']} is higher)")
 
