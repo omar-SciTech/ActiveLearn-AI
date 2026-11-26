@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   user_id       INTEGER PRIMARY KEY AUTOINCREMENT,
   full_name     TEXT NOT NULL,
   email         TEXT NOT NULL UNIQUE,
+  user_code     TEXT UNIQUE,                    -- student code / staff code, used to sign in
   password_hash TEXT NOT NULL,
   role          TEXT NOT NULL DEFAULT 'student' CHECK (role IN ('student','instructor')),
   created_at    TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP

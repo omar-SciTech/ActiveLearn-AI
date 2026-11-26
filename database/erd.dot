@@ -8,6 +8,7 @@ digraph ERD {
     <TR><TD ALIGN="LEFT"><B>PK</B> user_id</TD></TR>
     <TR><TD ALIGN="LEFT">full_name</TD></TR>
     <TR><TD ALIGN="LEFT">email (UNIQUE)</TD></TR>
+    <TR><TD ALIGN="LEFT">user_code (UNIQUE)</TD></TR>
     <TR><TD ALIGN="LEFT">password_hash</TD></TR>
     <TR><TD ALIGN="LEFT">role (student/instructor)</TD></TR>
     <TR><TD ALIGN="LEFT">created_at</TD></TR></TABLE>>];

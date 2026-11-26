@@ -11,11 +11,11 @@
 PRAGMA foreign_keys = ON;
 
 -- ---------- 1. users ----------
-INSERT INTO users (user_id, full_name, email, password_hash, role) VALUES
-(1, 'Dr. Instructor', 'instructor@university.edu', 'scrypt:32768:8:1$eaF19sCzfOSWX6H3$eb567d06309f27b9a146f0a6be416d06ae9d7c0d3fbd77d48fe1655eab64d84e73f37950874174a2d69d1ba30e7726e460b0a3a31bc42d25ce595eaf5544499e', 'instructor'),
-(2, 'Ahmed Mohamed', 'ahmed.is201@university.edu', 'scrypt:32768:8:1$eaF19sCzfOSWX6H3$eb567d06309f27b9a146f0a6be416d06ae9d7c0d3fbd77d48fe1655eab64d84e73f37950874174a2d69d1ba30e7726e460b0a3a31bc42d25ce595eaf5544499e', 'student'),
-(3, 'Sara Ali', 'sara@university.edu', 'scrypt:32768:8:1$eaF19sCzfOSWX6H3$eb567d06309f27b9a146f0a6be416d06ae9d7c0d3fbd77d48fe1655eab64d84e73f37950874174a2d69d1ba30e7726e460b0a3a31bc42d25ce595eaf5544499e', 'student'),
-(4, 'Omar Khaled', 'omar@university.edu', 'scrypt:32768:8:1$eaF19sCzfOSWX6H3$eb567d06309f27b9a146f0a6be416d06ae9d7c0d3fbd77d48fe1655eab64d84e73f37950874174a2d69d1ba30e7726e460b0a3a31bc42d25ce595eaf5544499e', 'student');
+INSERT INTO users (user_id, full_name, email, user_code, password_hash, role) VALUES
+(1, 'Dr. Instructor', 'instructor@university.edu', 'DR001', 'scrypt:32768:8:1$eaF19sCzfOSWX6H3$eb567d06309f27b9a146f0a6be416d06ae9d7c0d3fbd77d48fe1655eab64d84e73f37950874174a2d69d1ba30e7726e460b0a3a31bc42d25ce595eaf5544499e', 'instructor'),
+(2, 'Ahmed Mohamed', 'ahmed.is201@university.edu', '20260002', 'scrypt:32768:8:1$eaF19sCzfOSWX6H3$eb567d06309f27b9a146f0a6be416d06ae9d7c0d3fbd77d48fe1655eab64d84e73f37950874174a2d69d1ba30e7726e460b0a3a31bc42d25ce595eaf5544499e', 'student'),
+(3, 'Sara Ali', 'sara@university.edu', '20260003', 'scrypt:32768:8:1$eaF19sCzfOSWX6H3$eb567d06309f27b9a146f0a6be416d06ae9d7c0d3fbd77d48fe1655eab64d84e73f37950874174a2d69d1ba30e7726e460b0a3a31bc42d25ce595eaf5544499e', 'student'),
+(4, 'Omar Khaled', 'omar@university.edu', '20260004', 'scrypt:32768:8:1$eaF19sCzfOSWX6H3$eb567d06309f27b9a146f0a6be416d06ae9d7c0d3fbd77d48fe1655eab64d84e73f37950874174a2d69d1ba30e7726e460b0a3a31bc42d25ce595eaf5544499e', 'student');
 
 -- ---------- 2. courses ----------
 INSERT INTO courses (course_id, code, title, instructor_id) VALUES

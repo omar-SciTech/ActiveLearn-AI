@@ -11,12 +11,35 @@ c = app.test_client()
 def H(t): return {"Authorization": "Bearer " + t}
 
 print("AI model active:", mastery.MODEL_ACTIVE)
-t = c.post("/api/auth/login", json={"email": "ahmed.is201@university.edu", "password": "password123"}).json["token"]
-i = c.post("/api/auth/login", json={"role": "instructor", "name": "Dr. Instructor", "password": "password123"}).json["token"]
-assert c.post("/api/auth/login", json={"email": "ahmed.is201@university.edu", "password": "x"}).status_code == 401
-assert c.post("/api/auth/register", json={"full_name": "New S", "email": "n@u.edu", "password": "secret1"}).status_code == 201
-assert c.post("/api/auth/login", json={"role": "student", "name": "Auto", "email": "auto@u.edu", "password": "1234"}).status_code == 201
-assert c.post("/api/auth/login", json={"role": "instructor", "name": "Ahmed Mohamed", "password": "password123"}).status_code == 401
+L = lambda **b: c.post("/api/auth/login", json=b)
+S = lambda **b: c.post("/api/auth/signup", json=b)
+t = L(role="student", login="20260002", password="password123").json["token"]            # student code
+assert L(role="student", login="ahmed.is201@university.edu", password="password123").status_code == 200  # or e-mail
+i = L(role="instructor", login="DR001", password="password123").json["token"]             # staff code
+assert L(role="student", login="20260002", password="x").status_code == 401
+assert L(role="instructor", login="20260002", password="password123").status_code == 403  # wrong role
+assert L(role="student", login="nobody", password="password123").status_code == 401       # no auto sign-up any more
+# student sign-up -> enrolled -> can sign in with the code
+r = S(role="student", full_name="New Student", email="new@u.edu", user_code="20269999", password="secret1")
+assert r.status_code == 201 and r.json["user"]["user_code"] == "20269999", r.json
+assert L(role="student", login="20269999", password="secret1").status_code == 200
+assert S(role="student", full_name="Dup", email="dup@u.edu", user_code="20269999", password="secret1").status_code == 409
+assert S(role="student", full_name="Dup", email="new@u.edu", user_code="20268888", password="secret1").status_code == 409
+assert S(role="student", full_name="Bad", email="bad", user_code="20267777", password="secret1").status_code == 400
+assert S(role="student", full_name="Bad", email="b@u.edu", user_code="20267777", password="123").status_code == 400
+# instructor sign-up (no key needed locally; the hosted site requires INSTRUCTOR_SIGNUP_KEY)
+assert c.get("/api/public/courses").json[0]["code"] == "IS201"
+r = S(role="instructor", full_name="Dr. New", user_code="DR777", course="IS201", password="teach123")
+assert r.status_code == 201 and r.json["user"]["role"] == "instructor", r.json
+assert L(role="instructor", login="DR777", password="teach123").status_code == 200
+assert S(role="instructor", full_name="Dr. X", user_code="DR778", course="NOPE", password="teach123").status_code == 400
+import app as app_mod
+app_mod.INSTRUCTOR_KEY = "k-123"
+assert S(role="instructor", full_name="Dr. Y", user_code="DR779", course="IS201", password="teach123").status_code == 403
+assert S(role="instructor", full_name="Dr. Y", user_code="DR779", course="IS201", password="teach123",
+         instructor_key="k-123").status_code == 201
+app_mod.INSTRUCTOR_KEY = None
+print("sign in / sign up OK")
 
 s = c.post("/api/quiz/start", json={"course_id": 1}, headers=H(t)).json; sid = s["session_id"]; qn = s["question"]
 print("first adaptive question: chapter", qn["chapter_no"], qn["difficulty"])

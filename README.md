@@ -45,11 +45,13 @@ Training curves and all metrics: [`model/results/`](model/results). Details: [`m
 Other systems: `pip install flask itsdangerous werkzeug` then `python backend/app.py`.
 Without `torch` the app runs the numpy copy of the same model (`numpy` is needed).
 
-| Login as | Fields |
+The first screen is **Sign in**; new users press **Don't have an account? Sign up**.
+
+| Account | How |
 |---|---|
-| Student (demo) | any name + `ahmed.is201@university.edu` + code `password123` |
-| New student | your name + any university email + a code you choose (4+ characters) → the account is created |
-| Instructor | name `Dr. Instructor` + code `password123` (no email) – on your own computer; the live site's instructor code is kept by the team |
+| Student (demo) | Sign in with student code `20260002` and password `password123` |
+| New student | Sign up → name, university e-mail, student code, password → then sign in with the code |
+| Instructor | Sign up → Instructor → name, staff code, course (IS201), password. On your own computer no key is needed; on the live site instructors need the activation key from the team |
 
 ## Folder structure
 ```

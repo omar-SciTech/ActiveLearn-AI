@@ -17,13 +17,20 @@ installed on PythonAnywhere.
 5. Back on the Web tab, set **Force HTTPS** on, then press the green **Reload** button.
 6. Open `https://<username>.pythonanywhere.com`.
 
-## Change the instructor code (do this once)
-The demo instructor code `password123` is written in the public README. In a Bash console:
+## Change the demo instructor password (do this once)
+The demo instructor account (staff code `DR001`) starts with the local demo password. In a Bash console:
 ```
 cd ~/ActiveLearn-AI/backend
-python3 set_password.py "Dr. Instructor" "<new code>"
+python3 set_password.py DR001 "<new password>"
 ```
-then press **Reload** on the Web tab.
+Never paste the new password anywhere that ends up in git, screenshots or screen recordings.
+
+## Instructor sign-up key
+Anyone can sign up as a student. Signing up as an **instructor** on the hosted site needs the activation key
+that the WSGI file creates once. Read it in a Bash console and give it to instructors privately:
+```
+cat ~/activelearn_data/instructor_key
+```
 
 ## Update the site after a new push to GitHub
 ```

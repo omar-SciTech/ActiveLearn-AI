@@ -13,22 +13,24 @@
 <!-- users -->
 <g id="node1" class="node">
 <title>users</title>
-<polygon fill="#1e3a8a" stroke="transparent" points="8.5,-232 8.5,-254 151.5,-254 151.5,-232 8.5,-232"/>
-<polygon fill="none" stroke="black" points="8.5,-232 8.5,-254 151.5,-254 151.5,-232 8.5,-232"/>
-<text text-anchor="start" x="63" y="-241.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">users</text>
-<polygon fill="none" stroke="black" points="8.5,-210 8.5,-232 151.5,-232 151.5,-210 8.5,-210"/>
-<text text-anchor="start" x="13.5" y="-219.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">PK</text>
-<text text-anchor="start" x="30.5" y="-219.2" font-family="Helvetica,sans-Serif" font-size="11.00"> user_id</text>
-<polygon fill="none" stroke="black" points="8.5,-188 8.5,-210 151.5,-210 151.5,-188 8.5,-188"/>
-<text text-anchor="start" x="13.5" y="-196.2" font-family="Helvetica,sans-Serif" font-size="11.00">full_name</text>
-<polygon fill="none" stroke="black" points="8.5,-166 8.5,-188 151.5,-188 151.5,-166 8.5,-166"/>
-<text text-anchor="start" x="13.5" y="-174.2" font-family="Helvetica,sans-Serif" font-size="11.00">email (UNIQUE)</text>
-<polygon fill="none" stroke="black" points="8.5,-144 8.5,-166 151.5,-166 151.5,-144 8.5,-144"/>
-<text text-anchor="start" x="13.5" y="-152.2" font-family="Helvetica,sans-Serif" font-size="11.00">password_hash</text>
-<polygon fill="none" stroke="black" points="8.5,-122 8.5,-144 151.5,-144 151.5,-122 8.5,-122"/>
-<text text-anchor="start" x="13.5" y="-130.2" font-family="Helvetica,sans-Serif" font-size="11.00">role (student/instructor)</text>
-<polygon fill="none" stroke="black" points="8.5,-100 8.5,-122 151.5,-122 151.5,-100 8.5,-100"/>
-<text text-anchor="start" x="13.5" y="-108.2" font-family="Helvetica,sans-Serif" font-size="11.00">created_at</text>
+<polygon fill="#1e3a8a" stroke="transparent" points="8.5,-243 8.5,-265 151.5,-265 151.5,-243 8.5,-243"/>
+<polygon fill="none" stroke="black" points="8.5,-243 8.5,-265 151.5,-265 151.5,-243 8.5,-243"/>
+<text text-anchor="start" x="63" y="-252.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white">users</text>
+<polygon fill="none" stroke="black" points="8.5,-221 8.5,-243 151.5,-243 151.5,-221 8.5,-221"/>
+<text text-anchor="start" x="13.5" y="-230.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">PK</text>
+<text text-anchor="start" x="30.5" y="-230.2" font-family="Helvetica,sans-Serif" font-size="11.00"> user_id</text>
+<polygon fill="none" stroke="black" points="8.5,-199 8.5,-221 151.5,-221 151.5,-199 8.5,-199"/>
+<text text-anchor="start" x="13.5" y="-207.2" font-family="Helvetica,sans-Serif" font-size="11.00">full_name</text>
+<polygon fill="none" stroke="black" points="8.5,-177 8.5,-199 151.5,-199 151.5,-177 8.5,-177"/>
+<text text-anchor="start" x="13.5" y="-185.2" font-family="Helvetica,sans-Serif" font-size="11.00">email (UNIQUE)</text>
+<polygon fill="none" stroke="black" points="8.5,-155 8.5,-177 151.5,-177 151.5,-155 8.5,-155"/>
+<text text-anchor="start" x="13.5" y="-163.2" font-family="Helvetica,sans-Serif" font-size="11.00">user_code (UNIQUE)</text>
+<polygon fill="none" stroke="black" points="8.5,-133 8.5,-155 151.5,-155 151.5,-133 8.5,-133"/>
+<text text-anchor="start" x="13.5" y="-141.2" font-family="Helvetica,sans-Serif" font-size="11.00">password_hash</text>
+<polygon fill="none" stroke="black" points="8.5,-111 8.5,-133 151.5,-133 151.5,-111 8.5,-111"/>
+<text text-anchor="start" x="13.5" y="-119.2" font-family="Helvetica,sans-Serif" font-size="11.00">role (student/instructor)</text>
+<polygon fill="none" stroke="black" points="8.5,-89 8.5,-111 151.5,-111 151.5,-89 8.5,-89"/>
+<text text-anchor="start" x="13.5" y="-97.2" font-family="Helvetica,sans-Serif" font-size="11.00">created_at</text>
 </g>
 <!-- courses -->
 <g id="node2" class="node">
@@ -105,9 +107,9 @@
 <!-- users&#45;&gt;quiz_sessions -->
 <g id="edge6" class="edge">
 <title>users&#45;&gt;quiz_sessions</title>
-<path fill="none" stroke="#334155" d="M149.78,-261.72C184.89,-300.26 230.16,-343.87 278,-374 357.07,-423.79 459.16,-456.64 531.73,-475.58"/>
-<polygon fill="#334155" stroke="#334155" points="143.38,-262.11 150.79,-255.39 152.14,-256.88 144.73,-263.59 143.38,-262.11"/>
-<polyline fill="none" stroke="#334155" points="146.42,-258.01 149.77,-261.72 "/>
+<path fill="none" stroke="#334155" d="M160.28,-273.07C193.69,-308.6 234.8,-346.8 278,-374 357.07,-423.79 459.16,-456.64 531.73,-475.58"/>
+<polygon fill="#334155" stroke="#334155" points="153.69,-273.34 160.99,-266.51 162.36,-267.97 155.05,-274.8 153.69,-273.34"/>
+<polyline fill="none" stroke="#334155" points="156.66,-269.19 160.07,-272.84 "/>
 <polygon fill="#334155" stroke="#334155" points="532.08,-475.67 540.64,-482.52 536.92,-476.92 541.76,-478.16 541.76,-478.16 541.76,-478.16 536.92,-476.92 542.88,-473.8 532.08,-475.67 532.08,-475.67"/>
 <text text-anchor="middle" x="335.5" y="-433" font-family="Helvetica,sans-Serif" font-size="10.00">starts</text>
 </g>
@@ -141,9 +143,9 @@
 <!-- users&#45;&gt;attempts -->
 <g id="edge9" class="edge">
 <title>users&#45;&gt;attempts</title>
-<path fill="none" stroke="#334155" d="M152.07,-92.2C198.66,-46.75 263.78,0 334.5,0 334.5,0 334.5,0 947.5,0 1062.69,0 1143.82,-115.61 1190.21,-207.86"/>
-<polygon fill="#334155" stroke="#334155" points="152.68,-98.61 145.67,-91.49 147.09,-90.08 154.11,-97.21 152.68,-98.61"/>
-<polyline fill="none" stroke="#334155" points="148.46,-95.75 152.02,-92.24 "/>
+<path fill="none" stroke="#334155" d="M162.99,-81.85C208.58,-39.92 269.15,0 334.5,0 334.5,0 334.5,0 947.5,0 1062.69,0 1143.82,-115.61 1190.21,-207.86"/>
+<polygon fill="#334155" stroke="#334155" points="163.32,-88.37 156.51,-81.05 157.98,-79.68 164.79,-87.01 163.32,-88.37"/>
+<polyline fill="none" stroke="#334155" points="159.19,-85.39 162.85,-81.99 "/>
 <polygon fill="#334155" stroke="#334155" points="1190.3,-208.03 1190.7,-218.98 1192.52,-212.51 1194.73,-216.99 1194.73,-216.99 1194.73,-216.99 1192.52,-212.51 1198.77,-214.99 1190.3,-208.03 1190.3,-208.03"/>
 <text text-anchor="middle" x="624" y="-3" font-family="Helvetica,sans-Serif" font-size="10.00">makes</text>
 </g>

@@ -72,48 +72,88 @@ def auth(role=None):
         return w
     return deco
 
-@app.post("/api/auth/register")
-def register():
-    d = request.get_json(force=True)
-    name, email, pw = (d.get("full_name") or "").strip(), (d.get("email") or "").strip().lower(), d.get("password") or ""
-    role = d.get("role", "student")
-    if not name or "@" not in email or len(pw) < 6: return err("Name, valid email and 6+ char password required")
-    if role not in ("student", "instructor"): return err("Invalid role")
-    if q("SELECT 1 FROM users WHERE email=?", (email,), one=True): return err("Email already registered", 409)
-    uid = run("INSERT INTO users(full_name,email,password_hash,role) VALUES(?,?,?,?)",
-              (name, email, generate_password_hash(pw), role))
-    u = q("SELECT * FROM users WHERE user_id=?", (uid,), one=True)
-    return jsonify(token=make_token(u), user=pub_user(u)), 201
+import re
+CODE_RE = re.compile(r"^[A-Za-z0-9._-]{3,20}$")
+INSTRUCTOR_KEY = os.environ.get("INSTRUCTOR_SIGNUP_KEY")   # set on the hosted site; unset = local/dev
+
+
+def ensure_schema():
+    """Upgrades an older database in place: adds users.user_code (sign-in code) and fills it for old rows."""
+    if not os.path.exists(DB_PATH):
+        return
+    with sqlite3.connect(DB_PATH) as c:
+        cols = [r[1] for r in c.execute("PRAGMA table_info(users)")]
+        if not cols:
+            return
+        if "user_code" not in cols:
+            c.execute("ALTER TABLE users ADD COLUMN user_code TEXT")
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS ux_users_code ON users(user_code)")
+        for uid, role in c.execute("SELECT user_id, role FROM users WHERE user_code IS NULL").fetchall():
+            code = f"DR{uid:03d}" if role == "instructor" else f"2026{uid:04d}"
+            c.execute("UPDATE users SET user_code=? WHERE user_id=?", (code, uid))
+
+
+ensure_schema()
+
 
 @app.post("/api/auth/login")
 def login():
-    """Student: email + code (password). A new email creates the student account and enrolls it in IS201.
-    Instructor: name (or email) + code."""
+    """Sign in with a student/staff code (or e-mail) + password. The chosen role must match the account."""
     d = request.get_json(force=True)
     role = d.get("role", "student")
-    name = (d.get("name") or "").strip()
-    email = (d.get("email") or "").strip().lower()
+    ident = (d.get("login") or d.get("code") or d.get("email") or d.get("name") or "").strip()
     pw = d.get("password") or ""
-    if not pw: return err("Code is required")
-    if role == "instructor" and not email:
-        u = q("SELECT * FROM users WHERE lower(full_name)=lower(?) AND role='instructor'", (name,), one=True)
-    else:
-        u = q("SELECT * FROM users WHERE email=?", (email,), one=True)
-        if not u and role == "student":
-            if not name or "@" not in email: return err("Name and a valid university email are required")
-            if len(pw) < 4: return err("The code must be at least 4 characters")
-            uid = run("INSERT INTO users(full_name,email,password_hash,role) VALUES(?,?,?,'student')",
-                      (name, email, generate_password_hash(pw)))
-            run("INSERT OR IGNORE INTO enrollments(user_id,course_id) SELECT ?, course_id FROM courses WHERE code='IS201'", (uid,))
-            u = q("SELECT * FROM users WHERE user_id=?", (uid,), one=True)
-            return jsonify(token=make_token(u), user=pub_user(u), created=True), 201
+    if not ident or not pw: return err("Enter your code and password")
+    u = q("SELECT * FROM users WHERE lower(user_code)=lower(?) OR email=lower(?)", (ident, ident), one=True)
     if not u or not check_password_hash(u["password_hash"], pw):
-        return err("Wrong login details or code", 401)
+        return err("Wrong code or password", 401)
     if u["role"] != role:
         return err("This account is not a " + role + " account", 403)
     return jsonify(token=make_token(u), user=pub_user(u))
 
-def pub_user(u): return {k: u[k] for k in ("user_id", "full_name", "email", "role")}
+
+@app.get("/api/public/courses")
+def public_courses():  # for the instructor sign-up form
+    return jsonify(q("SELECT code, title FROM courses ORDER BY code"))
+
+
+@app.post("/api/auth/signup")
+@app.post("/api/auth/register")
+def signup():
+    """Student: name + university e-mail + student code + password -> enrolled in IS201.
+    Instructor: name + staff code + course + password (+ the instructor key when the site sets one)."""
+    d = request.get_json(force=True)
+    role = d.get("role", "student")
+    name = (d.get("full_name") or d.get("name") or "").strip()
+    code = (d.get("user_code") or d.get("code") or "").strip()
+    pw = d.get("password") or ""
+    if role not in ("student", "instructor"): return err("Invalid role")
+    if len(name) < 3: return err("Please enter your full name")
+    if not CODE_RE.match(code): return err("The code must be 3-20 letters or digits")
+    if len(pw) < 6: return err("The password must be at least 6 characters")
+    if q("SELECT 1 FROM users WHERE lower(user_code)=lower(?)", (code,), one=True):
+        return err("This code is already registered — sign in instead", 409)
+    if role == "student":
+        email = (d.get("email") or "").strip().lower()
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email): return err("Please enter a valid university e-mail")
+        if q("SELECT 1 FROM users WHERE email=?", (email,), one=True):
+            return err("This e-mail is already registered — sign in instead", 409)
+        uid = run("INSERT INTO users(full_name,email,user_code,password_hash,role) VALUES(?,?,?,?,'student')",
+                  (name, email, code, generate_password_hash(pw)))
+        run("INSERT OR IGNORE INTO enrollments(user_id,course_id) SELECT ?, course_id FROM courses WHERE code='IS201'", (uid,))
+    else:
+        if INSTRUCTOR_KEY and d.get("instructor_key") != INSTRUCTOR_KEY:
+            return err("Wrong instructor key — ask the course administrator for it", 403)
+        course = q("SELECT * FROM courses WHERE upper(code)=upper(?)", ((d.get("course") or "").strip(),), one=True)
+        if not course: return err("Please choose your course")
+        email = f"{code.lower()}@staff.activelearn"   # instructors sign in with their staff code
+        uid = run("INSERT INTO users(full_name,email,user_code,password_hash,role) VALUES(?,?,?,?,'instructor')",
+                  (name, email, code, generate_password_hash(pw)))
+        run("UPDATE courses SET instructor_id=? WHERE course_id=? AND instructor_id IS NULL", (uid, course["course_id"]))
+    u = q("SELECT * FROM users WHERE user_id=?", (uid,), one=True)
+    return jsonify(token=make_token(u), user=pub_user(u), created=True), 201
+
+def pub_user(u): return {k: u.get(k) for k in ("user_id", "full_name", "email", "user_code", "role")}
 
 @app.get("/api/me")
 @auth()
@@ -467,7 +507,8 @@ def index():
 def health():
     import mastery
     labels = {"dktq-gru": "DKT-Q (GRU)", "dktq-lstm": "DKT-Q (LSTM)", "dkt-gru": "DKT (GRU)", "dkt-lstm": "DKT (LSTM)", "sakt": "SAKT"}
-    return jsonify(status="ok", ai_model=mastery.MODEL_NAME, ai_model_label=labels.get(mastery.MODEL_NAME, mastery.MODEL_NAME))
+    return jsonify(status="ok", ai_model=mastery.MODEL_NAME, ai_model_label=labels.get(mastery.MODEL_NAME, mastery.MODEL_NAME),
+                   instructor_key_required=bool(INSTRUCTOR_KEY))
 
 if __name__ == "__main__":
     if not os.path.exists(DB_PATH):           # first run: build the demo database automatically

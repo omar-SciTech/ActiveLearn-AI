@@ -35,4 +35,4 @@ This runs the same `schema.sql` + `data.sql`, then adds 30 simulated students an
 | attempts | every answer (chosen option, correct?, time) | PK attempt_id, FK session_id, user_id, question_id |
 | topic_mastery | AI prediction per student and chapter | PK (user_id, topic_id) |
 
-All demo users have the password `password123`.
+Every user has a `user_code` (student code or staff code, UNIQUE) used to sign in. The demo users' password is `password123` (local copy only).

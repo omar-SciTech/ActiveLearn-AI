@@ -34,13 +34,14 @@ python seed.py        # builds activelearn.db from ../database/schema.sql + data
 python app.py         # app + API on http://localhost:5000 (builds the DB on first run)
 python test_api.py    # automated test of every endpoint on a temporary copy (prints ALL OK)
 ```
-Demo logins (password `password123`): `ahmed.is201@university.edu` (student), `instructor@university.edu` (instructor).
+Demo student: code `20260002`, password `password123`. Instructors create their own account from Sign up.
 
 ## 6. API (send `Authorization: Bearer <token>` except register/login)
 | Method & path | Who | What |
 |---|---|---|
-| POST /api/auth/login | all | student: `{role:'student', name, email, password}` (new email → account created + enrolled in IS201); instructor: `{role:'instructor', name, password}` → token |
-| POST /api/auth/register | all | create an account explicitly |
+| POST /api/auth/login | all | `{role, login, password}` – `login` is the student/staff code (or the e-mail) → token |
+| POST /api/auth/signup | all | student: `{role:'student', full_name, email, user_code, password}` → enrolled in IS201; instructor: `{role:'instructor', full_name, user_code, course, password, instructor_key}` (key needed only when the server sets `INSTRUCTOR_SIGNUP_KEY`) |
+| GET /api/public/courses | public | course list for the sign-up form |
 | GET /api/me | all | current user |
 | GET /api/courses, GET /api/courses/:id/topics | all | courses and chapters |
 | POST /api/courses/:id/enroll | student | join course |

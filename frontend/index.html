@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="data:,">
-  <title id="page-title">منصة المذاكرة التكيفية - Active Learning</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23b85239'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='26' fill='white' text-anchor='middle'%3EAL%3C/text%3E%3C/svg%3E">
+  <title id="page-title">ActiveLearn AI · IS201</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -181,6 +181,15 @@
 
     html.dark .auth-error { color: #fca5a5; }
     .demo-hint { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 14px; }
+    .auth-heading { font-size: 20px; font-weight: 800; margin: 2px 0 4px; }
+    .auth-subheading { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+    .auth-switch-line { text-align: center; font-size: 13.5px; color: var(--text-muted); margin-top: 16px; }
+    .link-btn { background: none; border: none; padding: 0; color: var(--primary); font: inherit; font-weight: 700; cursor: pointer; }
+    .link-btn:hover { text-decoration: underline; }
+    .field-hint { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
+    .icon-svg { width: 16px; height: 16px; vertical-align: -3px; flex-shrink: 0; }
+    .icon-pill-btn { display: inline-flex; align-items: center; gap: 6px; }
+    .auth-input[type="password"] { letter-spacing: 0.08em; }
 
     /* ================= التطبيق الرئيسي والـ Sidebar ================= */
     .app-shell { display: flex; min-height: 100vh; }
@@ -618,14 +627,14 @@
   <!-- ================= شاشة تسجيل الدخول ================= -->
   <div id="auth-screen" class="auth-screen">
     <div class="auth-top-controls">
-      <button onclick="toggleTheme()" id="auth-theme-btn" class="icon-pill-btn">🌙</button>
-      <button onclick="toggleLanguage()" id="auth-lang-btn" class="icon-pill-btn">🌐 English</button>
+      <button onclick="toggleTheme()" id="auth-theme-btn" class="icon-pill-btn" aria-label="Theme"></button>
+      <button onclick="toggleLanguage()" id="auth-lang-btn" class="icon-pill-btn"></button>
     </div>
 
     <div class="auth-card">
       <div class="auth-showcase">
         <div>
-          <div class="showcase-badge" id="showcase-badge">🧠 Deep Knowledge Tracing</div>
+          <div class="showcase-badge" id="showcase-badge">DKT-Q (GRU)</div>
           <h2 id="showcase-title">ذاكر بهدوء وتركيز بدل ما تلف في المنهج</h2>
           <p id="showcase-desc">
             مساحة مذاكرة تتابع فهمك خطوة بخطوة وتقترح عليك الأسئلة اللي محتاج تراجعها فعلاً قبل الامتحان.
@@ -639,7 +648,7 @@
         </div>
 
         <div class="showcase-footer" id="showcase-footer">
-          Database Project • IS201 Question Bank & ASSISTments Dataset
+          IS201 course project · model trained on 282K real student answers (ASSISTments)
         </div>
       </div>
 
@@ -657,27 +666,68 @@
           <button type="button" id="role-admin-btn" onclick="selectRole('admin')" class="role-btn">أدمن / دكتور (Instructor)</button>
         </div>
 
-        <form onsubmit="handleLogin(event)">
+        <!-- sign in -->
+        <form id="form-signin" onsubmit="handleLogin(event)" novalidate>
+          <div class="auth-heading" id="signin-heading">تسجيل الدخول</div>
           <div class="form-group">
-            <label class="form-label" id="lbl-fullname" for="input-name">الاسم</label>
-            <input type="text" id="input-name" class="auth-input" placeholder="اكتب اسمك هنا" required />
+            <label class="form-label" id="lbl-login" for="in-login">كود الطالب أو الإيميل</label>
+            <input type="text" id="in-login" class="auth-input" autocomplete="username" />
           </div>
-
-          <div class="form-group" id="group-email">
-            <label class="form-label" id="lbl-email" for="input-email">الحساب الجامعي</label>
-            <input type="email" id="input-email" class="auth-input" placeholder="name@university.edu" required />
-          </div>
-
           <div class="form-group">
-            <label class="form-label" id="lbl-code" for="input-code">الكود</label>
-            <input type="password" id="input-code" class="auth-input" placeholder="اكتب الكود الخاص بك" required />
+            <label class="form-label" id="lbl-pass" for="in-pass">كلمة السر</label>
+            <input type="password" id="in-pass" class="auth-input" autocomplete="current-password" />
           </div>
-
-          <button type="submit" id="btn-login" class="btn-login-submit">Log in</button>
+          <button type="submit" id="btn-login" class="btn-login-submit">تسجيل الدخول</button>
           <div id="auth-error" class="auth-error hidden"></div>
+          <div class="auth-switch-line">
+            <span id="txt-no-account">معندكش حساب؟</span>
+            <button type="button" class="link-btn" id="link-signup" onclick="showAuthView('signup')">إنشاء حساب</button>
+          </div>
+          <p class="demo-hint" id="demo-hint"></p>
         </form>
 
-        <p class="demo-hint" id="demo-hint">اكتب بياناتك واضغط Log in للبدء</p>
+        <!-- sign up -->
+        <form id="form-signup" class="hidden" onsubmit="handleSignup(event)" novalidate>
+          <div class="auth-heading" id="signup-heading">إنشاء حساب</div>
+          <div class="auth-subheading" id="signup-sub"></div>
+          <div class="form-group">
+            <label class="form-label" id="lbl-su-name" for="su-name">الاسم بالكامل</label>
+            <input type="text" id="su-name" class="auth-input" autocomplete="name" />
+          </div>
+          <div class="form-group" id="grp-su-email">
+            <label class="form-label" id="lbl-su-email" for="su-email">الإيميل الجامعي</label>
+            <input type="email" id="su-email" class="auth-input" placeholder="name@university.edu" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" id="lbl-su-code" for="su-code">كود الطالب</label>
+            <input type="text" id="su-code" class="auth-input" autocomplete="off" />
+          </div>
+          <div class="form-group hidden" id="grp-su-course">
+            <label class="form-label" id="lbl-su-course" for="su-course">المادة</label>
+            <select id="su-course" class="auth-input"><option value="IS201">IS201 — Introduction to Information Systems</option></select>
+          </div>
+          <div class="form-group hidden" id="grp-su-key">
+            <label class="form-label" id="lbl-su-key" for="su-key">كود تفعيل الدكاترة</label>
+            <input type="password" id="su-key" class="auth-input" autocomplete="off" />
+            <div class="field-hint" id="hint-su-key"></div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label" id="lbl-su-pass" for="su-pass">كلمة السر</label>
+              <input type="password" id="su-pass" class="auth-input" autocomplete="new-password" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" id="lbl-su-pass2" for="su-pass2">تأكيد كلمة السر</label>
+              <input type="password" id="su-pass2" class="auth-input" autocomplete="new-password" />
+            </div>
+          </div>
+          <button type="submit" id="btn-signup" class="btn-login-submit">إنشاء الحساب</button>
+          <div id="signup-error" class="auth-error hidden"></div>
+          <div class="auth-switch-line">
+            <span id="txt-have-account">عندك حساب؟</span>
+            <button type="button" class="link-btn" id="link-signin" onclick="showAuthView('signin')">تسجيل الدخول</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -690,12 +740,12 @@
           <div class="logo-icon">AL</div>
           <div class="logo-text">
             <h1>ActiveLearn AI</h1>
-            <span>IS201 • Deep Knowledge Tracing</span>
+            <span>Adaptive study platform</span>
           </div>
         </div>
 
         <div class="companion-note">
-          <span>🌱</span>
+          <span id="companion-icon"></span>
           <span id="sidebar-companion-text">خطوة بخطوة — المذاكرة الهادية بتثبت المعلومة</span>
         </div>
 
@@ -736,8 +786,8 @@
         <div class="topbar-title" id="topbar-heading">لوحة التحكم الرئيسية</div>
 
         <div class="topbar-actions">
-          <button onclick="toggleTheme()" id="theme-btn" class="icon-pill-btn">🌙</button>
-          <button onclick="toggleLanguage()" id="lang-btn" class="icon-pill-btn">🌐 English</button>
+          <button onclick="toggleTheme()" id="theme-btn" class="icon-pill-btn" aria-label="Theme"></button>
+          <button onclick="toggleLanguage()" id="lang-btn" class="icon-pill-btn"></button>
 
           <div class="user-chip">
             <div class="avatar" id="user-avatar">ط</div>
@@ -754,7 +804,7 @@
         <section id="page-dashboard">
           <div class="ai-hero-banner">
             <div>
-              <div class="ai-tag">✨ <span id="ai-badge-text">اقتراح المذاكرة الذكي (LSTM)</span></div>
+              <div class="ai-tag"><span id="ai-badge-text">اقتراح المذاكرة الذكي (LSTM)</span></div>
               <h2 id="ai-hero-title">خلينا نراجع الفصل التاني: Database Management</h2>
               <p id="ai-hero-desc">بحسب محاولاتك الأخيرة، احتمال حلك الصح في الفصل ده حوالي 42% — مراجعة سريعة دلوقتي هتفرق جداً.</p>
             </div>
@@ -813,7 +863,7 @@
         <!-- 2. الكويز التكيفي -->
         <section id="page-quiz" class="hidden quiz-box">
           <div class="ai-toast">
-            <span>🤖</span>
+            <span id="toast-icon"></span>
             <span id="ai-feedback-box">اخترت لك السؤال ده عشان نطمن على مستواك.</span>
           </div>
 
@@ -977,38 +1027,57 @@
 
     const i18n = {
       ar: {
-        pageTitle: "منصة المذاكرة التكيفية - Active Learning",
-        showcaseTitle: "ذاكر بهدوء وتركيز بدل ما تلف في المنهج",
-        showcaseDesc: "مساحة مذاكرة تتابع فهمك خطوة بخطوة وتقترح عليك الأسئلة اللي محتاج تراجعها فعلاً قبل الامتحان.",
-        feat1: "تقدير واضح لمستواك في كل فصل",
-        feat2: "أسئلة تتغير حسب إجاباتك أول بأول",
-        feat3: "ملخص لأكتر النقط اللي بتغلط فيها",
-        loginSub: "أهلاً بك — سجل دخولك للمتابعة",
-        roleStudent: "طالب (Student)",
-        roleAdmin: "أدمن / دكتور (Instructor)",
-        lblFullname: "الاسم",
-        placeholderName: "اكتب اسمك هنا",
-        lblEmail: "الحساب الجامعي",
-        placeholderEmail: "name@university.edu",
-        lblCode: "الكود",
-        placeholderCode: "اكتب الكود الخاص بك",
+        pageTitle: "ActiveLearn AI · IS201",
+        showcaseTitle: "اعرف هتذاكر إيه قبل الامتحان",
+        showcaseDesc: "بنسجل كل إجابة بتحلها، والموديل بيقدّر مستواك في كل فصل من فصول IS201 ويختار سؤالك الجاي من الفصول اللي محتاجة مراجعة.",
+        feat1: "نسبة مستواك في كل فصل من الـ 6 فصول",
+        feat2: "السؤال الجاي من الفصل اللي محتاج مراجعة",
+        feat3: "الأسئلة اللي بتغلط فيها أكتر في مكان واحد",
+        loginSub: "IS201 — مقدمة في نظم المعلومات",
+        roleStudent: "طالب",
+        roleAdmin: "دكتور المادة",
         btnLogin: "Log in",
-        demoHintStudent: "أول مرة؟ اكتب اسمك وإيميلك وكود من اختيارك وهيتعمل لك حساب. للتجربة: ahmed.is201@university.edu والكود password123",
-        demoHintAdmin: "للتجربة: الاسم Dr. Instructor والكود password123",
-        errMissing: "من فضلك اكتب البيانات المطلوبة للدخول.",
+        demoHintStudent: "حساب تجربة: الكود 20260002 وكلمة السر password123",
+        signinHeading: "تسجيل الدخول",
+        lblLoginStudent: "كود الطالب أو الإيميل",
+        lblLoginAdmin: "كود الدكتور",
+        lblPass: "كلمة السر",
+        btnSignIn: "تسجيل الدخول",
+        noAccount: "معندكش حساب؟",
+        linkSignup: "إنشاء حساب",
+        haveAccount: "عندك حساب؟",
+        linkSignin: "تسجيل الدخول",
+        signupHeading: "إنشاء حساب",
+        signupSubStudent: "هتستخدم كود الطالب وكلمة السر في تسجيل الدخول بعد كده.",
+        signupSubAdmin: "حساب دكتور: هتدخل بالكود بتاعك وكلمة السر.",
+        lblSuName: "الاسم بالكامل",
+        lblSuEmail: "الإيميل الجامعي",
+        lblSuCodeStudent: "كود الطالب",
+        lblSuCodeAdmin: "كود الدكتور",
+        phSuCodeStudent: "مثلاً 20260123",
+        phSuCodeAdmin: "مثلاً DR104",
+        lblSuCourse: "المادة",
+        lblSuKey: "كود تفعيل حسابات الدكاترة",
+        hintSuKey: "بياخده الدكتور من مسؤول الموقع.",
+        lblSuPass: "كلمة السر",
+        lblSuPass2: "تأكيد كلمة السر",
+        btnSignup: "إنشاء الحساب",
+        errPassMatch: "كلمتين السر مش زي بعض.",
+        errPassShort: "كلمة السر لازم تكون 6 حروف أو أكتر.",
+                errMissing: "من فضلك اكمل البيانات المطلوبة.",
         errServer: "مش قادر أوصل للسيرفر — شغّل البرنامج بـ run.bat أو python backend/app.py",
-        sidebarCompanion: "خطوة بخطوة — المذاكرة الهادية بتثبت المعلومة",
+        sidebarCompanion: "IS201 — مقدمة في نظم المعلومات",
         sidebarStatusTitle: (m) => `${m} Model: Active`,
-        sidebarStatusSub: "مساحة مذاكرة هادية • جاهز للتركيز",
+        sidebarStatusSub: "بيتحدّث بعد كل إجابة",
         btnLogout: "تسجيل الخروج",
         navDashboard: "لوحة التحكم",
         navQuiz: "الكويز التكيفي",
         navBank: "بنك الأسئلة",
         navReports: "التقارير والتحليلات",
-        langBtn: "🌐 English",
+        langBtn: "English",
         roleLabelStudent: "طالب • IS201",
-        roleLabelAdmin: "أدمن / دكتور • IS201",
-        aiBadgeText: (m) => `اقتراح المذاكرة الذكي (${m})`,
+        roleLabelAdmin: "دكتور المادة • IS201",
+        aiBadgeText: (m) => `ترشيح الموديل · ${m}`,
         heroTitle: (ch, name) => `خلينا نراجع الفصل ${ch}: ${name}`,
         heroDesc: (p) => `بحسب محاولاتك لحد دلوقتي، احتمال حلك الصح في الفصل ده حوالي ${p}% — مراجعة سريعة دلوقتي هتفرق جداً.`,
         heroStartTitle: "يلا نبدأ أول جلسة مذاكرة",
@@ -1066,38 +1135,57 @@
         chapter: "الفصل"
       },
       en: {
-        pageTitle: "Active Learning Platform - Adaptive Study",
-        showcaseTitle: "Study Calmly & Focus on What Matters",
-        showcaseDesc: "A warm study space that tracks your understanding step by step and surfaces the questions you actually need before exam day.",
-        feat1: "Clear mastery snapshot for every topic",
-        feat2: "Questions that adapt naturally to your answers",
-        feat3: "A quick look at spots where you trip up most",
-        loginSub: "Welcome back — sign in to continue",
+        pageTitle: "ActiveLearn AI · IS201",
+        showcaseTitle: "Know what to study before the exam",
+        showcaseDesc: "Every answer you give is saved. The model estimates your level in each IS201 chapter and picks your next question from the chapters that need work.",
+        feat1: "Your level in each of the 6 chapters",
+        feat2: "Next question from the chapter you need most",
+        feat3: "Your most-missed questions in one list",
+        loginSub: "IS201 — Introduction to Information Systems",
         roleStudent: "Student",
-        roleAdmin: "Admin / Instructor",
-        lblFullname: "Name",
-        placeholderName: "Enter your name",
-        lblEmail: "University Account",
-        placeholderEmail: "name@university.edu",
-        lblCode: "Code",
-        placeholderCode: "Enter your code",
+        roleAdmin: "Instructor",
         btnLogin: "Log in",
-        demoHintStudent: "First time? Enter your name, email and a code of your choice to create an account. Demo: ahmed.is201@university.edu with code password123",
-        demoHintAdmin: "Demo: name Dr. Instructor with code password123",
-        errMissing: "Please enter the required login details.",
+        demoHintStudent: "Demo account: code 20260002 · password password123",
+        signinHeading: "Sign in",
+        lblLoginStudent: "Student code or e-mail",
+        lblLoginAdmin: "Staff code",
+        lblPass: "Password",
+        btnSignIn: "Sign in",
+        noAccount: "Don't have an account?",
+        linkSignup: "Sign up",
+        haveAccount: "Already have an account?",
+        linkSignin: "Sign in",
+        signupHeading: "Create your account",
+        signupSubStudent: "You'll sign in with your student code and this password.",
+        signupSubAdmin: "Instructor account — you'll sign in with your staff code and this password.",
+        lblSuName: "Full name",
+        lblSuEmail: "University e-mail",
+        lblSuCodeStudent: "Student code",
+        lblSuCodeAdmin: "Staff code",
+        phSuCodeStudent: "e.g. 20260123",
+        phSuCodeAdmin: "e.g. DR104",
+        lblSuCourse: "Course",
+        lblSuKey: "Instructor activation key",
+        hintSuKey: "Ask the site administrator for this key.",
+        lblSuPass: "Password",
+        lblSuPass2: "Confirm password",
+        btnSignup: "Create account",
+        errPassMatch: "The two passwords don't match.",
+        errPassShort: "The password must be at least 6 characters.",
+                errMissing: "Please fill in the required fields.",
         errServer: "Cannot reach the server — start the app with run.bat or python backend/app.py",
-        sidebarCompanion: "One step at a time — steady study builds confidence",
+        sidebarCompanion: "IS201 — Introduction to Information Systems",
         sidebarStatusTitle: (m) => `${m} Model: Active`,
-        sidebarStatusSub: "Calm study space • Ready when you are",
+        sidebarStatusSub: "Updates after every answer",
         btnLogout: "Sign Out",
         navDashboard: "Dashboard",
         navQuiz: "Adaptive Quiz",
         navBank: "Question Bank",
         navReports: "Analytics & Reports",
-        langBtn: "🌐 العربية",
+        langBtn: "العربية",
         roleLabelStudent: "Student • IS201",
-        roleLabelAdmin: "Admin / Instructor • IS201",
-        aiBadgeText: (m) => `Smart Study Pick (${m})`,
+        roleLabelAdmin: "Instructor • IS201",
+        aiBadgeText: (m) => `Model pick · ${m}`,
         heroTitle: (ch, name) => `Let's revisit Chapter ${ch}: ${name}`,
         heroDesc: (p) => `Based on your answers so far, your estimated chance of answering correctly here is about ${p}% — a short practice round now will help.`,
         heroStartTitle: "Let's start your first study session",
@@ -1191,13 +1279,31 @@
     }
 
     /* ---------------------------------------------------------------- login */
+    let authView = "signin";              // "signin" | "signup"
+    let instructorKeyRequired = false;
+
     function syncRoleFields() {
-      const emailGroup = document.getElementById("group-email");
-      const emailInput = document.getElementById("input-email");
+      const t = T();
       const isAdmin = currentRole === "admin";
-      emailGroup.classList.toggle("hidden", isAdmin);
-      emailInput.required = !isAdmin;
-      document.getElementById("demo-hint").textContent = isAdmin ? T().demoHintAdmin : T().demoHintStudent;
+      document.getElementById("lbl-login").textContent = isAdmin ? t.lblLoginAdmin : t.lblLoginStudent;
+      document.getElementById("in-login").placeholder = isAdmin ? "DR001" : "20260002";
+      document.getElementById("demo-hint").textContent = isAdmin ? "" : t.demoHintStudent;
+      document.getElementById("signup-sub").textContent = isAdmin ? t.signupSubAdmin : t.signupSubStudent;
+      document.getElementById("lbl-su-code").textContent = isAdmin ? t.lblSuCodeAdmin : t.lblSuCodeStudent;
+      document.getElementById("su-code").placeholder = isAdmin ? t.phSuCodeAdmin : t.phSuCodeStudent;
+      document.getElementById("grp-su-email").classList.toggle("hidden", isAdmin);
+      document.getElementById("grp-su-course").classList.toggle("hidden", !isAdmin);
+      document.getElementById("grp-su-key").classList.toggle("hidden", !(isAdmin && instructorKeyRequired));
+    }
+
+    function showAuthView(view) {
+      authView = view;
+      document.getElementById("form-signin").classList.toggle("hidden", view !== "signin");
+      document.getElementById("form-signup").classList.toggle("hidden", view !== "signup");
+      document.getElementById("auth-error").classList.add("hidden");
+      document.getElementById("signup-error").classList.add("hidden");
+      const first = document.getElementById(view === "signin" ? "in-login" : "su-name");
+      if (first) first.focus();
     }
 
     function selectRole(role) {
@@ -1205,34 +1311,71 @@
       document.getElementById("role-student-btn").classList.toggle("active", role === "student");
       document.getElementById("role-admin-btn").classList.toggle("active", role === "admin");
       document.getElementById("auth-error").classList.add("hidden");
+      document.getElementById("signup-error").classList.add("hidden");
       syncRoleFields();
+    }
+
+    async function signedIn(res) {
+      token = res.token; currentUser = res.user;
+      store.set("al_token", token); store.set("al_user", JSON.stringify(currentUser));
+      ["in-pass", "su-name", "su-email", "su-code", "su-pass", "su-pass2", "su-key"].forEach((id) => { document.getElementById(id).value = ""; });
+      await enterApp();
     }
 
     async function handleLogin(e) {
       e.preventDefault();
-      const name = document.getElementById("input-name").value.trim();
-      const code = document.getElementById("input-code").value.trim();
-      const email = document.getElementById("input-email").value.trim();
+      const login = document.getElementById("in-login").value.trim();
+      const password = document.getElementById("in-pass").value;
       const errBox = document.getElementById("auth-error");
-      if (!name || !code || (currentRole === "student" && !email)) {
-        errBox.textContent = T().errMissing; errBox.classList.remove("hidden"); return;
-      }
+      if (!login || !password) { errBox.textContent = T().errMissing; errBox.classList.remove("hidden"); return; }
       errBox.classList.add("hidden");
       const btn = document.getElementById("btn-login");
       btn.disabled = true;
       try {
-        const body = { role: currentRole === "admin" ? "instructor" : "student", name, password: code };
-        if (currentRole === "student") body.email = email;
-        const res = await api("/api/auth/login", { method: "POST", body });
-        token = res.token; currentUser = res.user;
-        store.set("al_token", token); store.set("al_user", JSON.stringify(currentUser));
-        document.getElementById("input-code").value = "";
-        await enterApp();
+        const role = currentRole === "admin" ? "instructor" : "student";
+        await signedIn(await api("/api/auth/login", { method: "POST", body: { role, login, password } }));
       } catch (err) {
         errBox.textContent = err.message; errBox.classList.remove("hidden");
       } finally {
         btn.disabled = false;
       }
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      const t = T();
+      const isAdmin = currentRole === "admin";
+      const v = (id) => document.getElementById(id).value.trim();
+      const body = { role: isAdmin ? "instructor" : "student", full_name: v("su-name"), user_code: v("su-code"),
+                     password: document.getElementById("su-pass").value };
+      if (isAdmin) { body.course = v("su-course"); body.instructor_key = document.getElementById("su-key").value; }
+      else body.email = v("su-email");
+      const errBox = document.getElementById("signup-error");
+      const fail = (m) => { errBox.textContent = m; errBox.classList.remove("hidden"); };
+      if (!body.full_name || !body.user_code || !body.password || (!isAdmin && !body.email)) return fail(t.errMissing);
+      if (body.password.length < 6) return fail(t.errPassShort);
+      if (body.password !== document.getElementById("su-pass2").value) return fail(t.errPassMatch);
+      errBox.classList.add("hidden");
+      const btn = document.getElementById("btn-signup");
+      btn.disabled = true;
+      try {
+        await signedIn(await api("/api/auth/signup", { method: "POST", body }));
+        showAuthView("signin");
+      } catch (err) {
+        fail(err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function loadPublicCourses() {
+      try {
+        const list = await api("/api/public/courses");
+        if (list.length) {
+          document.getElementById("su-course").innerHTML = list.map((c) =>
+            `<option value="${esc(c.code)}">${esc(c.code)} — ${esc(c.title)}</option>`).join("");
+        }
+      } catch (e) { /* keep the default option */ }
     }
 
     async function enterApp() {
@@ -1258,6 +1401,7 @@
       document.getElementById("app-shell").classList.add("hidden");
       document.getElementById("auth-screen").classList.remove("hidden");
       selectRole(currentRole);
+      showAuthView("signin");
     }
 
     function syncAdminVisibility() {
@@ -1410,7 +1554,7 @@
       }).join("");
 
       if (r && r.explanation) {
-        expl.innerHTML = `<span>💡</span><span><strong>${esc(t.explanationLabel)}</strong> <span class="bidi" style="display:inline-block">${esc(r.explanation)}</span></span>`;
+        expl.innerHTML = `${ICON.info}<span><strong>${esc(t.explanationLabel)}</strong> <span class="bidi" style="display:inline-block">${esc(r.explanation)}</span></span>`;
         expl.classList.remove("hidden");
       } else {
         expl.classList.add("hidden");
@@ -1505,7 +1649,7 @@
           `<div class="bidi" style="font-size:13.5px;color:var(--text-muted);margin-top:4px;"><strong>${L}:</strong> ${esc(q["option_" + L.toLowerCase()])}</div>`).join("");
         const answer = isAdmin
           ? `<span class="answer-tag">✓ ${esc(t.correctAnswerLabel)} ${q.correct_option}: ${esc(q["option_" + q.correct_option.toLowerCase()])}</span>` +
-            (q.explanation ? `<div class="bidi" style="font-size:12.5px;color:var(--text-muted);margin-top:8px;">💡 ${esc(q.explanation)}</div>` : "")
+            (q.explanation ? `<div class="bidi" style="font-size:12.5px;color:var(--text-muted);margin-top:8px;">${esc(q.explanation)}</div>` : "")
           : "";
         return `
           <div class="card">
@@ -1622,9 +1766,7 @@
     function toggleTheme() {
       const root = document.getElementById("html-root");
       root.classList.toggle("dark");
-      const icon = root.classList.contains("dark") ? "☀️" : "🌙";
-      document.getElementById("theme-btn").textContent = icon;
-      document.getElementById("auth-theme-btn").textContent = icon;
+      paintThemeButtons();
     }
 
     function toggleLanguage() {
@@ -1647,19 +1789,28 @@
       set("page-title", t.pageTitle);
       set("showcase-title", t.showcaseTitle);
       set("showcase-desc", t.showcaseDesc);
-      set("showcase-badge", `🧠 Deep Knowledge Tracing • ${modelLabel}`);
+      set("showcase-badge", `Deep Knowledge Tracing · ${modelLabel}`);
       set("feat-1", t.feat1); set("feat-2", t.feat2); set("feat-3", t.feat3);
       set("login-sub", t.loginSub);
       set("role-student-btn", t.roleStudent);
       set("role-admin-btn", t.roleAdmin);
-      set("lbl-fullname", t.lblFullname);
-      document.getElementById("input-name").placeholder = t.placeholderName;
-      set("lbl-email", t.lblEmail);
-      document.getElementById("input-email").placeholder = t.placeholderEmail;
-      set("lbl-code", t.lblCode);
-      document.getElementById("input-code").placeholder = t.placeholderCode;
-      set("btn-login", t.btnLogin);
-      set("demo-hint", currentRole === "admin" ? t.demoHintAdmin : t.demoHintStudent);
+      set("signin-heading", t.signinHeading);
+      set("lbl-pass", t.lblPass);
+      set("btn-login", t.btnSignIn);
+      set("txt-no-account", t.noAccount);
+      set("link-signup", t.linkSignup);
+      set("txt-have-account", t.haveAccount);
+      set("link-signin", t.linkSignin);
+      set("signup-heading", t.signupHeading);
+      set("lbl-su-name", t.lblSuName);
+      set("lbl-su-email", t.lblSuEmail);
+      set("lbl-su-course", t.lblSuCourse);
+      set("lbl-su-key", t.lblSuKey);
+      set("hint-su-key", t.hintSuKey);
+      set("lbl-su-pass", t.lblSuPass);
+      set("lbl-su-pass2", t.lblSuPass2);
+      set("btn-signup", t.btnSignup);
+      syncRoleFields();
       set("sidebar-companion-text", t.sidebarCompanion);
       set("sidebar-status-title", t.sidebarStatusTitle(modelLabel));
       set("sidebar-status-sub", t.sidebarStatusSub);
@@ -1668,8 +1819,7 @@
       set("nav-lbl-quiz", t.navQuiz);
       set("nav-lbl-bank", t.navBank);
       set("nav-lbl-reports", t.navReports);
-      set("lang-btn", t.langBtn);
-      set("auth-lang-btn", t.langBtn);
+      ["lang-btn", "auth-lang-btn"].forEach((id) => { document.getElementById(id).innerHTML = ICON.globe + `<span>${t.langBtn}</span>`; });
       const headingMap = { dashboard: t.navDashboard, quiz: t.navQuiz, bank: t.navBank, reports: t.navReports };
       set("topbar-heading", headingMap[currentTab]);
       set("ai-badge-text", t.aiBadgeText(modelLabel));
@@ -1704,13 +1854,33 @@
       else if (tabName === "quiz") renderQuizQuestion();
     }
 
+    /* ---------------------------------------------------------------- icons (inline SVG) */
+    const svg = (d) => `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+    const ICON = {
+      moon: svg('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'),
+      sun: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+      globe: svg('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>'),
+      book: svg('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>'),
+      info: svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'),
+      target: svg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'),
+    };
+    function paintThemeButtons() {
+      const dark = document.getElementById("html-root").classList.contains("dark");
+      ["theme-btn", "auth-theme-btn"].forEach((id) => { document.getElementById(id).innerHTML = dark ? ICON.sun : ICON.moon; });
+    }
+
     /* ---------------------------------------------------------------- start */
     async function boot() {
-      syncRoleFields();
+      document.getElementById("companion-icon").innerHTML = ICON.book;
+      document.getElementById("toast-icon").innerHTML = ICON.target;
+      paintThemeButtons();
       applyTranslations();
+      showAuthView("signin");
       try {
         const h = await api("/api/health");
         modelLabel = h.ai_model_label || h.ai_model || "AI";
+        instructorKeyRequired = !!h.instructor_key_required;
+        loadPublicCourses();
         applyTranslations();
       } catch (e) {
         const errBox = document.getElementById("auth-error");

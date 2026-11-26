@@ -100,6 +100,7 @@ def add_students(conn, n, password_hash, course_id=1):
         cur = conn.execute("INSERT INTO users(full_name,email,password_hash,role) VALUES(?,?,?,'student')",
                            (f"Sim Student {i:02d}", f"sim{i:02d}@demo.local", password_hash))
         ids.append(cur.lastrowid)
+        conn.execute("UPDATE users SET user_code=? WHERE user_id=?", (f"2026{cur.lastrowid:04d}", cur.lastrowid))
         conn.execute("INSERT INTO enrollments(user_id,course_id) VALUES(?,?)", (cur.lastrowid, course_id))
     conn.commit()
     return ids
