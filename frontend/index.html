@@ -334,6 +334,12 @@
       position: sticky;
       top: 0;
       z-index: 30;
+      background-image: radial-gradient(ellipse 420px 120px at var(--glow-x, 100%) 0%, var(--primary-soft), transparent 70%);
+    }
+    html[dir="ltr"] .topbar { --glow-x: 0%; }
+    .topbar::before {
+      content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent-amber), var(--primary));
     }
 
     .topbar-title { font-size: 18px; font-weight: 800; }
@@ -580,10 +586,79 @@
     .chip.active { background: var(--primary); border-color: var(--primary); color: #ffffff; }
     .chip-pct { font-weight: 600; opacity: 0.75; }
     .btn-practice {
-      background: none; border: none; padding: 0; color: var(--primary); font-family: inherit;
-      font-size: 12.5px; font-weight: 700; cursor: pointer;
+      background: transparent; border: 1px solid var(--primary); padding: 3px 12px; border-radius: 999px;
+      color: var(--primary); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
     }
-    .btn-practice:hover { text-decoration: underline; }
+    .btn-practice:hover { background: var(--primary); color: #ffffff; }
+
+    /* ---------- footer ---------- */
+    .app-footer { margin-top: auto; border-top: 1px solid var(--border-color); background: var(--bg-card); }
+    .footer-inner {
+      max-width: 1180px; margin: 0 auto; padding: 28px 28px 20px;
+      display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 28px;
+    }
+    @media (max-width: 860px) { .footer-inner { grid-template-columns: 1fr; gap: 20px; } }
+    .footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .footer-brand .logo-icon { width: 34px; height: 34px; border-radius: 11px; font-size: 13px; }
+    .footer-brand strong { font-size: 15px; }
+    .footer-about { font-size: 13px; line-height: 1.75; color: var(--text-muted); margin: 0 0 8px; }
+    .footer-slogan { font-size: 13px; font-weight: 700; color: var(--primary); margin: 0; }
+    .footer-col h4 { font-size: 13px; font-weight: 800; margin: 0 0 12px; color: var(--text-main); }
+    .footer-team { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+    .footer-team li { font-size: 13px; color: var(--text-main); }
+    .footer-team li span { color: var(--text-muted); font-size: 12px; margin-inline-start: 4px; }
+    .footer-links { display: grid; gap: 9px; justify-items: start; }
+    .footer-link {
+      display: inline-flex; align-items: center; gap: 8px; color: var(--text-main); font-size: 13px; font-weight: 600;
+      text-decoration: none; background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
+      transition: color 0.15s ease;
+    }
+    .footer-link:hover { color: var(--primary); }
+    .footer-link .icon-svg { width: 16px; height: 16px; color: var(--primary); }
+    .footer-bottom {
+      max-width: 1180px; margin: 0 auto; padding: 14px 28px 18px; border-top: 1px dashed var(--border-color);
+      font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px;
+    }
+
+    /* ---------- feedback window ---------- */
+    .fb-intro { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin: 0 0 16px; }
+    .fb-types { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .fb-email-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+      margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: var(--bg-subtle); font-size: 13px;
+    }
+    .fb-email-row a { color: var(--primary); font-weight: 700; text-decoration: none; direction: ltr; }
+    .fb-sent { color: var(--accent-sage); font-size: 13px; font-weight: 700; margin-top: 10px; }
+
+    /* ---------- motion (light, and off for people who ask their system for less motion) ---------- */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes growX { from { transform: scaleX(0); } }
+    @keyframes growY { from { transform: scaleY(0); } }
+    @keyframes popIn { 0% { transform: scale(1); } 45% { transform: scale(1.025); } 100% { transform: scale(1); } }
+    @keyframes nudge { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+    @keyframes heroShift { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+    .anim-in { animation: fadeUp 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    .ai-hero-banner { background-size: 180% 180%; animation: heroShift 14s ease-in-out infinite alternate; }
+    .fill { animation: growX 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; transform-origin: left center; }
+    html[dir="rtl"] .fill { transform-origin: right center; }
+    .bar-stick { animation: growY 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; transform-origin: bottom center; }
+    .opt-card.enter { animation: fadeUp 0.35s ease both; }
+    .opt-card.correct.just { animation: popIn 0.45s ease; }
+    .opt-card.wrong.just { animation: nudge 0.35s ease; }
+    .question-heading.enter, .ai-toast.enter { animation: fadeUp 0.35s ease both; }
+    .kpi-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .chip { transition: transform 0.15s ease, border-color 0.15s ease; }
+    .chip:hover { transform: translateY(-1px); }
+    .btn-white { transition: transform 0.2s ease; }
+    .btn-white:hover { transform: translateX(-3px); }
+    html[dir="ltr"] .btn-white:hover { transform: translateX(3px); }
+    .auth-card { animation: fadeUp 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    .modal-backdrop:not(.hidden) .modal-card { animation: fadeUp 0.3s ease both; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
 
     .filter-bar { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 14px; }
     @media (max-width: 768px) { .filter-bar { grid-template-columns: 1fr; } }
@@ -786,6 +861,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
             <span id="nav-lbl-reports">التقارير والتحليلات</span>
           </button>
+
+          <button onclick="openFeedback()" id="nav-feedback" class="nav-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span id="nav-lbl-feedback">الفيدباك والشكاوي</span>
+          </button>
         </nav>
       </div>
 
@@ -961,10 +1041,58 @@
           </div>
         </section>
       </main>
+
+      <footer class="app-footer">
+        <div class="footer-inner">
+          <div class="footer-col">
+            <div class="footer-brand"><div class="logo-icon">AL</div><strong>ActiveLearn AI</strong></div>
+            <p class="footer-about" id="footer-about">منصة مذاكرة تكيفية لمادة IS201: بتعرف مستواك في كل فصل وتختارلك السؤال اللي محتاجه.</p>
+            <p class="footer-slogan"><bdi dir="ltr">Study smart. Dream big.</bdi></p>
+          </div>
+          <div class="footer-col">
+            <h4 id="footer-team-h">فريق Inception</h4>
+            <ul class="footer-team" id="footer-team"></ul>
+          </div>
+          <div class="footer-col">
+            <h4 id="footer-links-h">تواصل وروابط</h4>
+            <div class="footer-links">
+              <button type="button" class="footer-link" onclick="openFeedback()"><span id="fl-fb-icon"></span><span id="footer-fb-text">الفيدباك والشكاوي</span></button>
+              <a class="footer-link" href="mailto:omarmgamaleldin7@gmail.com"><span id="fl-mail-icon"></span><span dir="ltr">omarmgamaleldin7@gmail.com</span></a>
+              <a class="footer-link" href="https://github.com/omar-SciTech/ActiveLearn-AI" target="_blank" rel="noopener"><span id="fl-code-icon"></span><span id="footer-gh-text">الكود على GitHub</span></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span id="footer-copy">© 2026 فريق Inception</span>
+          <span id="footer-place">IS201 · كلية الحاسبات والذكاء الاصطناعي، جامعة بنها</span>
+        </div>
+      </footer>
     </div>
   </div>
 
   <!-- ================= مودال إضافة / تعديل سؤال للأدمن ================= -->
+  <div id="feedback-modal" class="modal-backdrop hidden" onclick="if (event.target === this) closeFeedback()">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="card-header">
+        <h3 class="card-title" id="fb-title">الفيدباك والشكاوي</h3>
+        <button onclick="closeFeedback()" class="btn-ghost">✕</button>
+      </div>
+      <p class="fb-intro" id="fb-intro"></p>
+      <div class="fb-types" id="fb-types"></div>
+      <textarea id="fb-text" class="field-control" rows="5" style="resize: vertical;" oninput="document.getElementById('fb-error').classList.add('hidden')"></textarea>
+      <div id="fb-error" class="auth-error hidden"></div>
+      <div id="fb-sent" class="fb-sent hidden"></div>
+      <div class="action-bar">
+        <button type="button" onclick="closeFeedback()" class="btn-ghost" data-i18n="btnCancel">إلغاء</button>
+        <button type="button" onclick="sendFeedback()" class="btn-primary" id="fb-send">ابعت</button>
+      </div>
+      <div class="fb-email-row">
+        <span id="fb-direct">أو ابعت على الإيميل مباشرة:</span>
+        <a href="mailto:omarmgamaleldin7@gmail.com" dir="ltr">omarmgamaleldin7@gmail.com</a>
+      </div>
+    </div>
+  </div>
+
   <div id="question-modal" class="modal-backdrop hidden">
     <div class="modal-card">
       <div class="card-header">
@@ -1127,6 +1255,23 @@
         sessionDoneHint: "ارجع للوحة التحكم تشوف مستواك اتغير إزاي، أو ابدأ جلسة جديدة.",
         btnNewSession: "ابدأ جلسة جديدة",
         practiceLabel: "تدرب على:",
+        footerAbout: "منصة مذاكرة تكيفية لمادة IS201: بتعرف مستواك في كل فصل وتختارلك السؤال اللي محتاجه.",
+        footerTeamH: "فريق Inception",
+        footerTeam: [["عمر محمد جمال الدين", "قائد الفريق · AI"], ["عمر محمد الدريدي", "تحليل البيانات"],
+                     ["عمر كمال مصطفى", "قاعدة البيانات"], ["عمر عصام عبدالقادر", "الباك إند"], ["عمر رضا الصاوي", "الفرونت إند"]],
+        footerLinksH: "تواصل وروابط",
+        footerFb: "الفيدباك والشكاوي",
+        footerGh: "الكود على GitHub",
+        footerCopy: "© 2026 فريق Inception",
+        footerPlace: "IS201 · كلية الحاسبات والذكاء الاصطناعي، جامعة بنها",
+        fbTitle: "الفيدباك والشكاوي",
+        fbIntro: "رأيك بيفرق معانا. اكتب اقتراحك أو المشكلة اللي قابلتك، وهتوصل لفريق Inception على الإيميل.",
+        fbTypes: ["اقتراح", "مشكلة في الموقع", "شكوى"],
+        fbPlaceholder: "اكتب رسالتك هنا...",
+        fbSend: "ابعت",
+        fbEmpty: "اكتب رسالتك الأول.",
+        fbSent: "فتحنالك برنامج الإيميل والرسالة جاهزة، دوس إرسال من هناك. لو مفتحش، ابعت على الإيميل اللي تحت.",
+        fbDirect: "أو ابعت على الإيميل مباشرة:",
         practiceAll: "كل الفصول",
         practiceAllTitle: "مراجعة ذكية: الأسئلة من الفصول اللي محتاجة مراجعة",
         chapterShort: "الفصل",
@@ -1246,6 +1391,23 @@
         sessionDoneHint: "Check the dashboard to see how your level changed, or start a new session.",
         btnNewSession: "Start a new session",
         practiceLabel: "Practice:",
+        footerAbout: "An adaptive study platform for IS201: it tracks your level in every chapter and picks the question you need next.",
+        footerTeamH: "Team Inception",
+        footerTeam: [["Omar Mohamed Gamal El-Din", "Team lead · AI"], ["Omar El-Dereidy", "Data analysis"],
+                     ["Omar Kamal Mostafa", "Database"], ["Omar Essam Abdelkader", "Back end"], ["Omar Reda El-Sawy", "Front end"]],
+        footerLinksH: "Contact & links",
+        footerFb: "Feedback & complaints",
+        footerGh: "Source code on GitHub",
+        footerCopy: "© 2026 Team Inception",
+        footerPlace: "IS201 · Faculty of Computers & AI, Benha University",
+        fbTitle: "Feedback & complaints",
+        fbIntro: "Your opinion matters to us. Write a suggestion or a problem you ran into, and it will reach Team Inception by e-mail.",
+        fbTypes: ["Suggestion", "Problem on the site", "Complaint"],
+        fbPlaceholder: "Write your message here...",
+        fbSend: "Send",
+        fbEmpty: "Please write your message first.",
+        fbSent: "Your e-mail app is open with the message ready, press Send there. If nothing opened, use the e-mail below.",
+        fbDirect: "Or e-mail us directly:",
         practiceAll: "All chapters",
         practiceAllTitle: "Smart review: questions from the chapters that need it most",
         chapterShort: "Ch",
@@ -1524,13 +1686,13 @@
       const days = dash.weekly_activity;
       const maxCount = Math.max(1, ...days.map((d) => d.questions));
       const locale = currentLang === "ar" ? "ar-EG" : "en-US";
-      document.getElementById("weekly-chart").innerHTML = days.map((d) => {
+      document.getElementById("weekly-chart").innerHTML = days.map((d, i) => {
         const h = Math.max(2, Math.round((d.questions / maxCount) * 100));
         const label = new Date(d.day + "T12:00:00").toLocaleDateString(locale, { weekday: "short" });
         return `
           <div class="bar-col" title="${d.day}">
             <span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">${d.questions}</span>
-            <div class="bar-stick" style="height: ${h}%;"></div>
+            <div class="bar-stick" style="height: ${h}%; animation-delay: ${i * 70}ms;"></div>
             <span class="bar-day">${esc(label)}</span>
           </div>`;
       }).join("");
@@ -1558,6 +1720,42 @@
         document.getElementById("q-text").textContent = e.message;
       }
       renderQuizQuestion();
+    }
+
+    /* ---------------------------------------------------------------- feedback & complaints */
+    const FEEDBACK_EMAIL = "omarmgamaleldin7@gmail.com";
+    let fbType = 0;
+    function renderFeedbackTypes() {
+      document.getElementById("fb-types").innerHTML = T().fbTypes.map((label, i) =>
+        `<button type="button" class="chip ${i === fbType ? "active" : ""}" onclick="fbType=${i};renderFeedbackTypes()">${esc(label)}</button>`).join("");
+    }
+    function openFeedback() {
+      ["fb-error", "fb-sent"].forEach((id) => document.getElementById(id).classList.add("hidden"));
+      renderFeedbackTypes();
+      document.getElementById("feedback-modal").classList.remove("hidden");
+      document.getElementById("fb-text").focus();
+    }
+    function closeFeedback() { document.getElementById("feedback-modal").classList.add("hidden"); }
+    function sendFeedback() {
+      const t = T(), text = document.getElementById("fb-text").value.trim();
+      const errBox = document.getElementById("fb-error");
+      if (!text) { errBox.textContent = t.fbEmpty; errBox.classList.remove("hidden"); return; }
+      errBox.classList.add("hidden");
+      const who = currentUser ? `${currentUser.full_name} (${currentUser.user_code || currentUser.email})` : "";
+      const subject = `[ActiveLearn AI] ${t.fbTypes[fbType]}`;
+      const body = `${text}\n\n— ${who}`;
+      location.href = `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const ok = document.getElementById("fb-sent"); ok.textContent = t.fbSent; ok.classList.remove("hidden");
+    }
+
+    /* ---------------------------------------------------------------- motion helper */
+    function animateIn(section) {
+      const items = section.querySelectorAll(":scope > :not(.kpi-grid):not(.dashboard-split), :scope > .kpi-grid > *, :scope > .dashboard-split > *");
+      items.forEach((el, i) => {
+        el.classList.remove("anim-in"); void el.offsetWidth;
+        el.style.animationDelay = `${Math.min(i, 8) * 60}ms`;
+        el.classList.add("anim-in");
+      });
     }
 
     function practiceChapter(topicId) {          // topicId = null -> all chapters (smart review)
@@ -1613,14 +1811,20 @@
       document.getElementById("q-text").textContent = q.body;
 
       const r = quiz.result;
-      document.getElementById("q-options").innerHTML = ["A", "B", "C", "D"].map((letter) => {
-        let cls = "";
+      const isNew = q.question_id !== quiz.animQ;
+      const justAnswered = !!r && quiz.animR !== q.question_id;
+      quiz.animQ = q.question_id;
+      if (r) quiz.animR = q.question_id;
+      const qText = document.getElementById("q-text"), toast = document.querySelector(".ai-toast");
+      [qText, toast].forEach((el) => { el.classList.remove("enter"); if (isNew || justAnswered) { void el.offsetWidth; el.classList.add("enter"); } });
+      document.getElementById("q-options").innerHTML = ["A", "B", "C", "D"].map((letter, i) => {
+        let cls = isNew ? "enter" : "";
         if (r) {
-          if (letter === r.correct_option) cls = "correct";
-          else if (letter === quiz.selected) cls = "wrong";
+          if (letter === r.correct_option) cls = "correct" + (justAnswered ? " just" : "");
+          else if (letter === quiz.selected) cls = "wrong" + (justAnswered ? " just" : "");
         } else if (letter === quiz.selected) cls = "selected";
         return `
-          <button type="button" ${r ? "disabled" : ""} onclick="selectOption('${letter}')" class="opt-card ${cls}">
+          <button type="button" ${r ? "disabled" : ""} onclick="selectOption('${letter}')" class="opt-card ${cls}" ${isNew ? `style="animation-delay:${i * 60}ms"` : ""}>
             <span class="opt-letter">${letter}</span>
             <span class="bidi">${esc(q.options[letter])}</span>
           </button>`;
@@ -1902,6 +2106,14 @@
       set("ai-badge-text", t.aiBadgeText(modelLabel));
       set("btn-start-adaptive", t.btnStartAdaptive);
       set("practice-label", t.practiceLabel);
+      set("nav-lbl-feedback", t.footerFb);
+      set("footer-about", t.footerAbout); set("footer-team-h", t.footerTeamH); set("footer-links-h", t.footerLinksH);
+      set("footer-fb-text", t.footerFb); set("footer-gh-text", t.footerGh);
+      set("footer-copy", t.footerCopy); set("footer-place", t.footerPlace);
+      document.getElementById("footer-team").innerHTML = t.footerTeam.map(([n, r]) => `<li>${esc(n)} <span>${esc(r)}</span></li>`).join("");
+      set("fb-title", t.fbTitle); set("fb-intro", t.fbIntro); set("fb-send", t.fbSend); set("fb-direct", t.fbDirect);
+      document.getElementById("fb-text").placeholder = t.fbPlaceholder;
+      renderFeedbackTypes();
       renderPracticeChips();
       set("kpi-mastery-lbl", t.kpiMasteryLbl);
       set("kpi-sessions-lbl", t.kpiSessionsLbl);
@@ -1928,6 +2140,7 @@
       });
       document.getElementById(`page-${tabName}`).classList.remove("hidden");
       document.getElementById(`tab-${tabName}`).classList.add("active");
+      animateIn(document.getElementById(`page-${tabName}`));
       applyTranslations();
       if (tabName === "quiz" && !quiz.sessionId) startQuiz();
       else if (tabName === "quiz") renderQuizQuestion();
@@ -1942,6 +2155,9 @@
       book: svg('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>'),
       info: svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'),
       target: svg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'),
+      code: svg('<path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/>'),
+      mail: svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'),
+      chat: svg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
     };
     function paintThemeButtons() {
       const dark = document.getElementById("html-root").classList.contains("dark");
@@ -1952,6 +2168,9 @@
     async function boot() {
       document.getElementById("companion-icon").innerHTML = ICON.book;
       document.getElementById("toast-icon").innerHTML = ICON.target;
+      document.getElementById("fl-fb-icon").innerHTML = ICON.chat;
+      document.getElementById("fl-mail-icon").innerHTML = ICON.mail;
+      document.getElementById("fl-code-icon").innerHTML = ICON.code;
       paintThemeButtons();
       applyTranslations();
       showAuthView("signin");

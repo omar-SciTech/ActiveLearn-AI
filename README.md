@@ -47,7 +47,8 @@ Training curves and all metrics: [`model/results/`](model/results). Details: [`m
   (questions from one chapter, with difficulty that follows the student's level in it), question bank with search & filters, personal reports.
 - **Instructor:** class dashboard, add / edit / delete questions, class reports for today / this week / this month,
   hardest questions, questions whose difficulty label looks wrong.
-- **Arabic / English** interface.
+- **Feedback & complaints:** a form that opens an e-mail to the team, plus contact links and the team in the page footer.
+- **Arabic / English** interface, light / dark theme, light CSS animations (turned off for users who ask their system for reduced motion).
 - **Security:** hashed passwords (scrypt + salt), signed login tokens, role checks (student vs instructor), parameterized SQL.
 
 ## Quick start (Windows)
