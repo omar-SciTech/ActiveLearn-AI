@@ -71,6 +71,14 @@ digraph ERD {
     <TR><TD ALIGN="LEFT">p_correct (0-1)</TD></TR>
     <TR><TD ALIGN="LEFT">updated_at</TD></TR></TABLE>>];
 
+  feedback [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1e3a8a"><FONT COLOR="white"><B>feedback (anonymous)</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><B>PK</B> feedback_id</TD></TR>
+    <TR><TD ALIGN="LEFT">kind (suggestion/problem/complaint)</TD></TR>
+    <TR><TD ALIGN="LEFT">message</TD></TR>
+    <TR><TD ALIGN="LEFT">status (new/resolved)</TD></TR>
+    <TR><TD ALIGN="LEFT">created_at</TD></TR></TABLE>>];
+
   users -> enrollments [label="enrolls"];
   courses -> enrollments [label="has"];
   users -> courses [label="teaches", style=dashed];

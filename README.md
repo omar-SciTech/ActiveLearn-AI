@@ -47,7 +47,7 @@ Training curves and all metrics: [`model/results/`](model/results). Details: [`m
   (questions from one chapter, with difficulty that follows the student's level in it), question bank with search & filters, personal reports.
 - **Instructor:** class dashboard, add / edit / delete questions, class reports for today / this week / this month,
   hardest questions, questions whose difficulty label looks wrong.
-- **Feedback & complaints:** a form that opens an e-mail to the team, plus contact links and the team in the page footer.
+- **Feedback & complaints:** anonymous messages saved in the database and read by the instructor in the app, plus contact links and the team in the page footer.
 - **Arabic / English** interface, light / dark theme, light CSS animations (turned off for users who ask their system for reduced motion).
 - **Security:** hashed passwords (scrypt + salt), signed login tokens, role checks (student vs instructor), parameterized SQL.
 
@@ -74,7 +74,7 @@ ActiveLearn_AI/
 ├── run.bat          double-click to start
 ├── frontend/        index.html – the interface (served by the backend)
 ├── backend/         Flask API: app.py, mastery.py (AI hook), seed.py (demo DB), test_api.py
-├── database/        create_database.py (8 tables + 6 chapters + 60 questions, in Python), ERD, student simulator
+├── database/        create_database.py (9 tables + 6 chapters + 60 questions, in Python), ERD, student simulator
 ├── analysis/        reports.sql (13 reports), make_charts.py → charts/, export_for_ai.py
 ├── model/           PyTorch: dkt.py (DKT, DKT-Q, SAKT), prepare_data.py, train.py, predictor.py, results/, saved/
 │                    predictor_np.py + export_numpy.py: the same model without PyTorch (for hosting)
@@ -102,7 +102,7 @@ The database is written in Python (`sqlite3`). Build it with `python database/cr
 ## Course requirements
 | Requirement | Where |
 |---|---|
-| At least 3 tables in a real database | 8 tables – `database/create_database.py` |
+| At least 3 tables in a real database | 9 tables – `database/create_database.py` |
 | Database coded by the team | `database/create_database.py` (Python + sqlite3), opens in DB Browser for SQLite |
 | Reports (best / worst, day / week / month) | `analysis/reports.sql` (13 reports), report endpoints, `analysis/charts/` |
 | Search and filter | `GET /api/questions?search=&chapter=&difficulty=`, report R13 |

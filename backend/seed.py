@@ -1,6 +1,6 @@
 """Builds the demo database (backend/activelearn.db) in 3 steps:
 
-  1) database/create_database.py: create_tables() -> the 8 tables
+  1) database/create_database.py: create_tables() -> the 9 tables
   2) database/create_database.py: insert_data()   -> users, course, 6 chapters, 60 questions
   3) simulated history    -> 30 simulated students + answers for everyone, so reports and the
                              model have data to show (clearly marked as simulated)

@@ -8,7 +8,7 @@ A study platform that adapts to the student. Instead of random questions, the sy
 - SQLite database (`activelearn.db`, one file, created by `../database/create_database.py`)
 - Passwords hashed (werkzeug), login returns a signed token (itsdangerous)
 
-## 3. Database (8 tables – see ../database/README.md)
+## 3. Database (9 tables – see ../database/README.md)
 | Table | Purpose |
 |---|---|
 | users | students and instructors (role column) |
@@ -19,8 +19,9 @@ A study platform that adapts to the student. Instead of random questions, the sy
 | quiz_sessions | each practice session (adaptive or random; topic_id set = one-chapter practice) |
 | attempts | every answer: chosen option, correct or not, time taken |
 | topic_mastery | predicted probability of a correct answer per student per topic (written by the AI model) |
+| feedback | anonymous messages from the Feedback & complaints window (no user column); the instructor reads them in the app |
 
-Relationships: course 1–N topics, topic 1–N questions, user N–M course (via enrollments), user 1–N sessions, session 1–N attempts, question 1–N attempts, user N–M topic (via topic_mastery). See `../database/erd.png`.
+Relationships: course 1–N topics, topic 1–N questions, user N–M course (via enrollments), user 1–N sessions, session 1–N attempts, question 1–N attempts, user N–M topic (via topic_mastery); feedback is anonymous and stands alone. See `../database/erd.png`.
 
 ## 4. AI part (`mastery.py`)
 `predict_mastery(history, topic_ids)` loads the IS201 model named in `../model/saved/active_is201.json` (the trained model with the best validation AUC: DKT, DKT-Q or SAKT) once when the server starts. It predicts P(correct) for every question from the student's full answer history and averages them per chapter → `{topic_id: probability}`. If PyTorch or the model files are missing it falls back to a recency-weighted accuracy, so the app always works. After every answer the predictions are saved in `topic_mastery`. `GET /api/health` shows which model is active.
@@ -50,6 +51,8 @@ Demo student: code `20260002`, password `password123`. Instructors create their 
 | POST /api/quiz/start `{course_id, mode, topic_id?}` | student | start session, returns first question; with `topic_id` every question comes from that chapter |
 | POST /api/quiz/:sid/answer `{question_id, selected_option, time_taken_sec}` | student | saves attempt, returns correct/wrong + explanation + next question |
 | GET /api/quiz/:sid/next, POST /api/quiz/:sid/end | student | next question / finish and get score |
+| POST /api/feedback `{kind, message}` | any signed-in user | send a suggestion / problem / complaint anonymously: the sender is not stored (max 10 per hour) |
+| GET /api/feedback `?status=new\|resolved` · PUT /api/feedback/&lt;id&gt; `{status}` | instructor | read feedback, mark it resolved or new |
 | GET /api/reports/student/dashboard | student | questions solved, average accuracy, sessions this week, knowledge per chapter, weekly activity, "review chapter" recommendation |
 | GET /api/reports/student/history | student | past sessions |
 | GET /api/reports/hardest-questions | instructor | lowest correct % (filter by chapter/difficulty) |

@@ -2,7 +2,7 @@
 ActiveLearn AI - the database, written in Python (sqlite3).
 
 This one file builds the whole database:
-  1) create_tables()  -> the 8 tables, with primary keys, foreign keys, CHECK and UNIQUE constraints
+  1) create_tables()  -> the 9 tables, with primary keys, foreign keys, CHECK and UNIQUE constraints
   2) insert_data()    -> 4 users, the IS201 course, its 6 chapters and the question bank (60 questions)
   3) check()          -> prints row counts and tests the relations and constraints
 
@@ -107,17 +107,29 @@ TABLES = {
           updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY (user_id, topic_id)
         )""",
+
+    # messages from the "Feedback & complaints" window; the instructor reads them in the app.
+    # Anonymous on purpose: there is no user column, so nobody can see who sent a message.
+    "feedback": """
+        CREATE TABLE IF NOT EXISTS feedback (
+          feedback_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          kind        TEXT NOT NULL CHECK (kind IN ('suggestion','problem','complaint')),
+          message     TEXT NOT NULL CHECK (length(message) BETWEEN 1 AND 2000),
+          status      TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new','resolved')),
+          created_at  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )""",
 }
 
 INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_attempts_user     ON attempts(user_id, created_at)",
     "CREATE INDEX IF NOT EXISTS idx_attempts_question ON attempts(question_id)",
     "CREATE INDEX IF NOT EXISTS idx_questions_topic   ON questions(topic_id, difficulty)",
+    "CREATE INDEX IF NOT EXISTS idx_feedback_status   ON feedback(status, created_at)",
 ]
 
 
 def create_tables(con):
-    """Creates the 8 tables and their indexes (safe to run again: IF NOT EXISTS)."""
+    """Creates the 9 tables and their indexes (safe to run again: IF NOT EXISTS)."""
     con.execute("PRAGMA foreign_keys = ON")
     for sql in TABLES.values():
         con.execute(sql)

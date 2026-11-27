@@ -4,7 +4,7 @@ The whole database is written in Python with the built-in `sqlite3` module.
 
 | File | What it is |
 |---|---|
-| `create_database.py` | Builds the database: `create_tables()` creates the 8 tables (primary keys, foreign keys, CHECK and UNIQUE constraints), `insert_data()` inserts 4 users, the IS201 course, the 6 chapters of the course book and 60 questions (10 per chapter, each with 4 options, the correct answer, difficulty and an explanation), and `check()` prints row counts and tests the relations |
+| `create_database.py` | Builds the database: `create_tables()` creates the 9 tables (primary keys, foreign keys, CHECK and UNIQUE constraints), `insert_data()` inserts 4 users, the IS201 course, the 6 chapters of the course book and 60 questions (10 per chapter, each with 4 options, the correct answer, difficulty and an explanation), and `check()` prints row counts and tests the relations |
 | `simulate_students.py` | Generates **simulated** students and answers for testing (used by `backend/seed.py` and the model) |
 | `erd.png` / `erd.svg` / `erd.dot` | Entity Relationship Diagram |
 
@@ -37,5 +37,6 @@ This calls the same `create_tables()` and `insert_data()`, then adds 30 simulate
 | quiz_sessions | one practice session (all chapters, or one chapter when topic_id is set) | PK session_id, FK user_id, course_id, topic_id |
 | attempts | every answer (chosen option, correct?, time) | PK attempt_id, FK session_id, user_id, question_id |
 | topic_mastery | AI prediction per student and chapter | PK (user_id, topic_id) |
+| feedback | messages from the Feedback & complaints window (suggestion / problem / complaint, new / resolved); anonymous, so it has no link to users | PK feedback_id |
 
 Every user has a `user_code` (student code or staff code, UNIQUE) used to sign in. The demo users' password is `password123` (local copy only).

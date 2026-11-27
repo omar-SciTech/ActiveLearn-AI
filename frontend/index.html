@@ -631,6 +631,19 @@
     .fb-email-row a { color: var(--primary); font-weight: 700; text-decoration: none; direction: ltr; }
     .fb-sent { color: var(--accent-sage); font-size: 13px; font-weight: 700; margin-top: 10px; }
 
+    .nav-badge {
+      margin-inline-start: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px;
+      background: var(--primary); color: #ffffff; font-size: 11px; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .fb-item-meta { font-size: 12.5px; color: var(--text-muted); margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+    .fb-item-msg { font-size: 14.5px; line-height: 1.75; white-space: pre-wrap; margin: 12px 0 0; }
+    .fb-item.resolved { opacity: 0.7; }
+    .copy-btn {
+      background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); font-family: inherit;
+      padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+
     /* ---------- motion (light, and off for people who ask their system for less motion) ---------- */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
     @keyframes growX { from { transform: scaleX(0); } }
@@ -862,9 +875,10 @@
             <span id="nav-lbl-reports">التقارير والتحليلات</span>
           </button>
 
-          <button onclick="openFeedback()" id="nav-feedback" class="nav-btn">
+          <button onclick="feedbackNav()" id="tab-feedback" class="nav-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             <span id="nav-lbl-feedback">الفيدباك والشكاوي</span>
+            <span id="fb-new-badge" class="nav-badge hidden"></span>
           </button>
         </nav>
       </div>
@@ -1010,6 +1024,18 @@
           <div id="bank-list"></div>
         </section>
 
+        <!-- 5. رسايل الفيدباك (للدكتور) -->
+        <section id="page-feedback" class="hidden">
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 6px;">
+              <h3 class="card-title" id="fbin-title">رسايل الفيدباك والشكاوي</h3>
+              <div class="chip-row" id="fbin-filters"></div>
+            </div>
+            <p class="fb-intro" id="fbin-sub" style="margin: 0;"></p>
+          </div>
+          <div id="fbin-list"></div>
+        </section>
+
         <!-- 4. التقارير -->
         <section id="page-reports" class="hidden">
           <div class="card" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
@@ -1057,7 +1083,7 @@
             <h4 id="footer-links-h">تواصل وروابط</h4>
             <div class="footer-links">
               <button type="button" class="footer-link" onclick="openFeedback()"><span id="fl-fb-icon"></span><span id="footer-fb-text">الفيدباك والشكاوي</span></button>
-              <a class="footer-link" href="mailto:omarmgamaleldin7@gmail.com"><span id="fl-mail-icon"></span><span dir="ltr">omarmgamaleldin7@gmail.com</span></a>
+              <button type="button" class="footer-link" onclick="copyEmail(this.querySelector('.copy-note'))"><span id="fl-mail-icon"></span><bdi dir="ltr">omarmgamaleldin7@gmail.com</bdi><span class="copy-note" style="color:var(--text-muted);font-weight:600;font-size:12px;"></span></button>
               <a class="footer-link" href="https://github.com/omar-SciTech/ActiveLearn-AI" target="_blank" rel="noopener"><span id="fl-code-icon"></span><span id="footer-gh-text">الكود على GitHub</span></a>
             </div>
           </div>
@@ -1088,7 +1114,10 @@
       </div>
       <div class="fb-email-row">
         <span id="fb-direct">أو ابعت على الإيميل مباشرة:</span>
-        <a href="mailto:omarmgamaleldin7@gmail.com" dir="ltr">omarmgamaleldin7@gmail.com</a>
+        <span style="display:inline-flex;align-items:center;gap:10px;">
+          <bdi dir="ltr" style="color:var(--primary);font-weight:700;">omarmgamaleldin7@gmail.com</bdi>
+          <button type="button" class="copy-btn" id="fb-copy" onclick="copyEmail(this)">نسخ</button>
+        </span>
       </div>
     </div>
   </div>
@@ -1270,8 +1299,19 @@
         fbPlaceholder: "اكتب رسالتك هنا...",
         fbSend: "ابعت",
         fbEmpty: "اكتب رسالتك الأول.",
-        fbSent: "فتحنالك برنامج الإيميل والرسالة جاهزة، دوس إرسال من هناك. لو مفتحش، ابعت على الإيميل اللي تحت.",
-        fbDirect: "أو ابعت على الإيميل مباشرة:",
+        fbSent: "وصلت رسالتك للفريق، شكراً!",
+        fbDirect: "أو كلّمنا على الإيميل:",
+        fbIntroText: "رأيك بيفرق معانا. اكتب اقتراحك أو المشكلة اللي قابلتك. الرسالة بتوصل من غير اسمك، ومحدش هيعرف مين اللي بعتها.",
+        copy: "نسخ", copied: "اتنسخ ✓",
+        fbInboxNav: "رسايل الفيدباك",
+        fbInboxTitle: "رسايل الفيدباك والشكاوي",
+        fbInboxSub: "كل اللي الطلبة بعتوه من شباك الفيدباك، من غير أسامي. علّم على الرسالة لما تتحل.",
+        fbFilters: [["new", "جديدة"], ["resolved", "اتحلت"], ["", "الكل"]],
+        fbKinds: { suggestion: "اقتراح", problem: "مشكلة في الموقع", complaint: "شكوى" },
+        fbStatus: { new: "جديدة", resolved: "اتحلت" },
+        fbResolve: "تم الحل ✓", fbReopen: "رجّعها جديدة",
+        fbNone: "مفيش رسايل هنا.",
+        fbAnon: "مجهول",
         practiceAll: "كل الفصول",
         practiceAllTitle: "مراجعة ذكية: الأسئلة من الفصول اللي محتاجة مراجعة",
         chapterShort: "الفصل",
@@ -1406,8 +1446,19 @@
         fbPlaceholder: "Write your message here...",
         fbSend: "Send",
         fbEmpty: "Please write your message first.",
-        fbSent: "Your e-mail app is open with the message ready, press Send there. If nothing opened, use the e-mail below.",
-        fbDirect: "Or e-mail us directly:",
+        fbSent: "Your message reached the team. Thank you!",
+        fbDirect: "Or reach us by e-mail:",
+        fbIntroText: "Your opinion matters to us. Write a suggestion or a problem you ran into. Messages are anonymous: your name is never saved with them.",
+        copy: "Copy", copied: "Copied ✓",
+        fbInboxNav: "Feedback inbox",
+        fbInboxTitle: "Feedback & complaints",
+        fbInboxSub: "Everything students sent from the feedback window, anonymously. Mark a message when it's resolved.",
+        fbFilters: [["new", "New"], ["resolved", "Resolved"], ["", "All"]],
+        fbKinds: { suggestion: "Suggestion", problem: "Problem on the site", complaint: "Complaint" },
+        fbStatus: { new: "New", resolved: "Resolved" },
+        fbResolve: "Mark resolved ✓", fbReopen: "Reopen",
+        fbNone: "No messages here.",
+        fbAnon: "Anonymous",
         practiceAll: "All chapters",
         practiceAllTitle: "Smart review: questions from the chapters that need it most",
         chapterShort: "Ch",
@@ -1596,7 +1647,7 @@
         fillTopicSelects();
       } catch (e) { console.error(e); }
       showTab("dashboard");
-      loadDashboard(); loadBank(); loadReports();
+      loadDashboard(); loadBank(); loadReports(); refreshFeedbackBadge();
     }
 
     function handleLogout() {
@@ -1736,16 +1787,68 @@
       document.getElementById("fb-text").focus();
     }
     function closeFeedback() { document.getElementById("feedback-modal").classList.add("hidden"); }
-    function sendFeedback() {
-      const t = T(), text = document.getElementById("fb-text").value.trim();
-      const errBox = document.getElementById("fb-error");
+    const FB_KINDS = ["suggestion", "problem", "complaint"];
+    async function sendFeedback() {
+      const t = T(), box = document.getElementById("fb-text"), text = box.value.trim();
+      const errBox = document.getElementById("fb-error"), ok = document.getElementById("fb-sent"), btn = document.getElementById("fb-send");
+      ok.classList.add("hidden");
       if (!text) { errBox.textContent = t.fbEmpty; errBox.classList.remove("hidden"); return; }
-      errBox.classList.add("hidden");
-      const who = currentUser ? `${currentUser.full_name} (${currentUser.user_code || currentUser.email})` : "";
-      const subject = `[ActiveLearn AI] ${t.fbTypes[fbType]}`;
-      const body = `${text}\n\n— ${who}`;
-      location.href = `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      const ok = document.getElementById("fb-sent"); ok.textContent = t.fbSent; ok.classList.remove("hidden");
+      errBox.classList.add("hidden"); btn.disabled = true;
+      try {
+        await api("/api/feedback", { method: "POST", body: { kind: FB_KINDS[fbType], message: text } });
+        box.value = ""; ok.textContent = t.fbSent; ok.classList.remove("hidden");
+      } catch (e) {
+        errBox.textContent = e.message; errBox.classList.remove("hidden");
+      } finally { btn.disabled = false; }
+    }
+
+    function copyEmail(target) {
+      const t = T();
+      const done = () => { target.textContent = t.copied; setTimeout(() => { target.textContent = target.id === "fb-copy" ? t.copy : ""; }, 1600); };
+      if (navigator.clipboard) navigator.clipboard.writeText(FEEDBACK_EMAIL).then(done, done); else done();
+    }
+
+    /* instructor inbox */
+    let fbFilter = "new", fbRows = [];
+    function feedbackNav() { if (currentRole === "admin") showTab("feedback"); else openFeedback(); }
+    async function loadInbox() {
+      try { fbRows = await api(`/api/feedback${fbFilter ? `?status=${fbFilter}` : ""}`); } catch (e) { fbRows = []; }
+      drawInbox(); refreshFeedbackBadge();
+    }
+    async function refreshFeedbackBadge() {
+      const badge = document.getElementById("fb-new-badge");
+      if (currentRole !== "admin") { badge.classList.add("hidden"); return; }
+      try {
+        const n = (await api("/api/feedback?status=new")).length;
+        badge.textContent = n; badge.classList.toggle("hidden", n === 0);
+      } catch (e) { badge.classList.add("hidden"); }
+    }
+    function drawInbox() {
+      const t = T();
+      document.getElementById("fbin-filters").innerHTML = t.fbFilters.map(([v, label]) =>
+        `<button type="button" class="chip ${v === fbFilter ? "active" : ""}" onclick="fbFilter='${v}';loadInbox()">${esc(label)}</button>`).join("");
+      const kindPill = { problem: "pill-hard", complaint: "pill-medium", suggestion: "pill-easy" };
+      const list = document.getElementById("fbin-list");
+      if (!fbRows.length) { list.innerHTML = `<div class="card" style="text-align:center;color:var(--text-muted);">${esc(t.fbNone)}</div>`; return; }
+      list.innerHTML = fbRows.map((f, i) => `
+        <div class="card fb-item ${f.status} anim-in" style="animation-delay:${Math.min(i, 8) * 50}ms">
+          <div class="badges-row">
+            <span class="pill ${kindPill[f.kind]}">${esc(t.fbKinds[f.kind])}</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="pill pill-neutral">${esc(t.fbStatus[f.status])}</span>
+              <button class="btn-ghost" onclick="setFeedbackStatus(${f.feedback_id}, '${f.status === "new" ? "resolved" : "new"}')">${esc(f.status === "new" ? t.fbResolve : t.fbReopen)}</button>
+            </div>
+          </div>
+          <p class="fb-item-msg bidi">${esc(f.message)}</p>
+          <div class="fb-item-meta">
+            <span>${esc(t.fbAnon)}</span>
+            <span><bdi>${esc(new Date(f.created_at.replace(" ", "T") + "Z").toLocaleString(currentLang === "ar" ? "ar-EG" : "en-GB", { dateStyle: "medium", timeStyle: "short" }))}</bdi></span>
+          </div>
+        </div>`).join("");
+    }
+    async function setFeedbackStatus(id, status) {
+      try { await api(`/api/feedback/${id}`, { method: "PUT", body: { status } }); } catch (e) { console.error(e); }
+      loadInbox();
     }
 
     /* ---------------------------------------------------------------- motion helper */
@@ -2101,19 +2204,21 @@
       set("nav-lbl-bank", t.navBank);
       set("nav-lbl-reports", t.navReports);
       ["lang-btn", "auth-lang-btn"].forEach((id) => { document.getElementById(id).innerHTML = ICON.globe + `<span>${t.langBtn}</span>`; });
-      const headingMap = { dashboard: t.navDashboard, quiz: t.navQuiz, bank: t.navBank, reports: t.navReports };
+      const headingMap = { dashboard: t.navDashboard, quiz: t.navQuiz, bank: t.navBank, reports: t.navReports, feedback: t.fbInboxTitle };
       set("topbar-heading", headingMap[currentTab]);
       set("ai-badge-text", t.aiBadgeText(modelLabel));
       set("btn-start-adaptive", t.btnStartAdaptive);
       set("practice-label", t.practiceLabel);
-      set("nav-lbl-feedback", t.footerFb);
+      set("nav-lbl-feedback", currentRole === "admin" ? t.fbInboxNav : t.footerFb);
+      set("fbin-title", t.fbInboxTitle); set("fbin-sub", t.fbInboxSub); set("fb-copy", t.copy);
       set("footer-about", t.footerAbout); set("footer-team-h", t.footerTeamH); set("footer-links-h", t.footerLinksH);
       set("footer-fb-text", t.footerFb); set("footer-gh-text", t.footerGh);
       set("footer-copy", t.footerCopy); set("footer-place", t.footerPlace);
       document.getElementById("footer-team").innerHTML = t.footerTeam.map(([n, r]) => `<li>${esc(n)} <span>${esc(r)}</span></li>`).join("");
-      set("fb-title", t.fbTitle); set("fb-intro", t.fbIntro); set("fb-send", t.fbSend); set("fb-direct", t.fbDirect);
+      set("fb-title", t.fbTitle); set("fb-intro", t.fbIntroText); set("fb-send", t.fbSend); set("fb-direct", t.fbDirect);
       document.getElementById("fb-text").placeholder = t.fbPlaceholder;
       renderFeedbackTypes();
+      if (currentRole === "admin" && currentTab === "feedback") drawInbox();
       renderPracticeChips();
       set("kpi-mastery-lbl", t.kpiMasteryLbl);
       set("kpi-sessions-lbl", t.kpiSessionsLbl);
@@ -2134,7 +2239,8 @@
     function showTab(tabName) {
       if (tabName === "quiz" && currentRole === "admin") tabName = "dashboard";
       currentTab = tabName;
-      ["dashboard", "quiz", "bank", "reports"].forEach((name) => {
+      if (tabName === "feedback" && currentRole !== "admin") tabName = "dashboard";
+      ["dashboard", "quiz", "bank", "reports", "feedback"].forEach((name) => {
         document.getElementById(`page-${name}`).classList.add("hidden");
         document.getElementById(`tab-${name}`).classList.remove("active");
       });
@@ -2142,6 +2248,7 @@
       document.getElementById(`tab-${tabName}`).classList.add("active");
       animateIn(document.getElementById(`page-${tabName}`));
       applyTranslations();
+      if (tabName === "feedback") loadInbox();
       if (tabName === "quiz" && !quiz.sessionId) startQuiz();
       else if (tabName === "quiz") renderQuizQuestion();
     }

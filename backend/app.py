@@ -81,7 +81,7 @@ INSTRUCTOR_KEY = os.environ.get("INSTRUCTOR_SIGNUP_KEY")   # set on the hosted s
 
 def ensure_schema():
     """Upgrades an older database in place: adds users.user_code (sign-in code) and fills it for old rows,
-    and quiz_sessions.topic_id (chapter practice)."""
+    quiz_sessions.topic_id (chapter practice) and the feedback table."""
     if not os.path.exists(DB_PATH):
         return
     with sqlite3.connect(DB_PATH) as c:
@@ -96,6 +96,9 @@ def ensure_schema():
             c.execute("UPDATE users SET user_code=? WHERE user_id=?", (code, uid))
         if "topic_id" not in [r[1] for r in c.execute("PRAGMA table_info(quiz_sessions)")]:
             c.execute("ALTER TABLE quiz_sessions ADD COLUMN topic_id INTEGER REFERENCES topics(topic_id) ON DELETE SET NULL")
+        from create_database import TABLES
+        c.execute(TABLES["feedback"])
+        c.execute("CREATE INDEX IF NOT EXISTS idx_feedback_status ON feedback(status, created_at)")
 
 
 ensure_schema()
@@ -351,6 +354,47 @@ def quiz_end(sid):
     run("UPDATE quiz_sessions SET ended_at=COALESCE(ended_at, CURRENT_TIMESTAMP) WHERE session_id=?", (sid,))
     r = q("SELECT COUNT(*) n, COALESCE(SUM(is_correct),0) c FROM attempts WHERE session_id=?", (sid,), one=True)
     return jsonify(answered=r["n"], correct=r["c"], accuracy_pct=round(100 * r["c"] / r["n"], 1) if r["n"] else 0)
+
+# ---------- feedback & complaints ----------
+FEEDBACK_KINDS = ("suggestion", "problem", "complaint")
+_fb_sent = {}          # user_id -> times of recent messages, kept in memory only (for the spam limit)
+
+def feedback_allowed(uid, limit=10, window=3600):
+    now = datetime.utcnow().timestamp()
+    recent = [t for t in _fb_sent.get(uid, []) if now - t < window]
+    if len(recent) >= limit:
+        _fb_sent[uid] = recent; return False
+    _fb_sent[uid] = recent + [now]; return True
+
+@app.post("/api/feedback")
+@auth()
+def send_feedback():
+    d = request.get_json(force=True)
+    kind, msg = d.get("kind"), (d.get("message") or "").strip()
+    if kind not in FEEDBACK_KINDS: return err("Invalid type")
+    if not msg: return err("Message is empty")
+    if len(msg) > 2000: return err("Message is too long (2000 characters max)")
+    if not feedback_allowed(g.uid): return err("Too many messages, try again later", 429)
+    # anonymous: the sender is not stored
+    fid = run("INSERT INTO feedback(kind, message) VALUES(?,?)", (kind, msg))
+    return jsonify(feedback_id=fid), 201
+
+@app.get("/api/feedback")
+@auth("instructor")
+def list_feedback():
+    sql = "SELECT feedback_id, kind, message, status, created_at FROM feedback f"
+    a = []
+    if request.args.get("status") in ("new", "resolved"): sql += " WHERE f.status=?"; a.append(request.args["status"])
+    return jsonify(q(sql + " ORDER BY f.feedback_id DESC LIMIT 500", a))
+
+@app.put("/api/feedback/<int:fid>")
+@auth("instructor")
+def update_feedback(fid):
+    status = request.get_json(force=True).get("status")
+    if status not in ("new", "resolved"): return err("Invalid status")
+    if not q("SELECT 1 FROM feedback WHERE feedback_id=?", (fid,), one=True): return err("Message not found", 404)
+    run("UPDATE feedback SET status=? WHERE feedback_id=?", (status, fid))
+    return jsonify(ok=True)
 
 # ---------- student reports (dashboard) ----------
 @app.get("/api/reports/student/dashboard")
