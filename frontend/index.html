@@ -25,6 +25,10 @@
       --accent-amber: #c97316;
       --shadow: 0 10px 26px -8px rgba(38, 33, 30, 0.08);
       --shadow-soft: 0 3px 12px rgba(38, 33, 30, 0.05);
+      --spot: rgba(184, 82, 57, 0.28);
+      --spot-soft: rgba(184, 82, 57, 0.10);
+      --spot-sage: rgba(43, 117, 90, 0.12);
+      --spot-dot: rgba(184, 82, 57, 0.85);
     }
 
     html.dark {
@@ -43,6 +47,10 @@
       --accent-amber: #f2a93b;
       --shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.48);
       --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.28);
+      --spot: rgba(223, 120, 92, 0.22);
+      --spot-soft: rgba(223, 120, 92, 0.08);
+      --spot-sage: rgba(73, 197, 147, 0.08);
+      --spot-dot: rgba(223, 120, 92, 0.75);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -317,7 +325,21 @@
     .btn-logout:hover { background: rgba(185, 28, 28, 0.13); transform: translateY(-1px); }
     html.dark .btn-logout { color: #fca5a5; border-color: rgba(252, 165, 165, 0.22); background: rgba(220, 38, 38, 0.12); }
 
-    .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; isolation: isolate; }
+    /* background spotlight: a warm glow and a brighter dot grid follow the mouse (--mx / --my set in JS) */
+    .main-wrapper::before, .main-wrapper::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .main-wrapper::before {
+      background:
+        radial-gradient(480px circle at var(--mx, 60%) var(--my, 30%), var(--spot), transparent 70%),
+        radial-gradient(55% 50% at 50% 0%, var(--spot-soft), transparent 70%),
+        radial-gradient(45% 45% at 10% 100%, var(--spot-sage), transparent 70%);
+    }
+    .main-wrapper::after {
+      background-image: radial-gradient(circle at 1px 1px, var(--spot-dot) 1.5px, transparent 0);
+      background-size: 22px 22px;
+      -webkit-mask-image: radial-gradient(380px circle at var(--mx, 60%) var(--my, 30%), #000 0%, rgba(0, 0, 0, 0.16) 75%, rgba(0, 0, 0, 0.12) 100%);
+      mask-image: radial-gradient(380px circle at var(--mx, 60%) var(--my, 30%), #000 0%, rgba(0, 0, 0, 0.16) 75%, rgba(0, 0, 0, 0.12) 100%);
+    }
     html[dir="rtl"] .main-wrapper { margin-right: 268px; }
     html[dir="ltr"] .main-wrapper { margin-left: 268px; }
 
@@ -2270,6 +2292,17 @@
       const dark = document.getElementById("html-root").classList.contains("dark");
       ["theme-btn", "auth-theme-btn"].forEach((id) => { document.getElementById(id).innerHTML = dark ? ICON.sun : ICON.moon; });
     }
+
+    /* ---------------------------------------------------------------- background spotlight */
+    let spotFrame = 0;
+    addEventListener("mousemove", (e) => {             // at most one update per frame
+      if (spotFrame) return;
+      spotFrame = requestAnimationFrame(() => {
+        spotFrame = 0;
+        document.documentElement.style.setProperty("--mx", e.clientX + "px");
+        document.documentElement.style.setProperty("--my", e.clientY + "px");
+      });
+    }, { passive: true });
 
     /* ---------------------------------------------------------------- start */
     async function boot() {
