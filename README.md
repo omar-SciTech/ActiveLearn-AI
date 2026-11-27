@@ -43,7 +43,8 @@ Training curves and all metrics: [`model/results/`](model/results). Details: [`m
 | ![Sign up](docs/screenshots/02_sign_up.jpg) | ![Arabic](docs/screenshots/06_arabic_light.jpg) |
 
 ## Features
-- **Students:** dashboard with AI mastery per chapter, adaptive quiz with explanations, question bank with search & filters, personal reports.
+- **Students:** dashboard with AI mastery per chapter, adaptive quiz with explanations, chapter practice
+  (questions from one chapter, with difficulty that follows the student's level in it), question bank with search & filters, personal reports.
 - **Instructor:** class dashboard, add / edit / delete questions, class reports for today / this week / this month,
   hardest questions, questions whose difficulty label looks wrong.
 - **Arabic / English** interface.

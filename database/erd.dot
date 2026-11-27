@@ -49,6 +49,7 @@ digraph ERD {
     <TR><TD ALIGN="LEFT"><B>FK</B> user_id</TD></TR>
     <TR><TD ALIGN="LEFT"><B>FK</B> course_id</TD></TR>
     <TR><TD ALIGN="LEFT">mode (adaptive/random)</TD></TR>
+    <TR><TD ALIGN="LEFT"><B>FK</B> topic_id (chapter practice, optional)</TD></TR>
     <TR><TD ALIGN="LEFT">started_at</TD></TR>
     <TR><TD ALIGN="LEFT">ended_at</TD></TR></TABLE>>];
 
@@ -82,4 +83,5 @@ digraph ERD {
   questions -> attempts [label="answered in"];
   users -> topic_mastery [label="has"];
   topics -> topic_mastery [label="measured for"];
+  topics -> quiz_sessions [label="practised in", style=dashed];
 }

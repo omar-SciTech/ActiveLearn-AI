@@ -568,6 +568,23 @@
       padding: 8px 14px; border-radius: 11px; font-size: 12.5px; font-weight: 700; cursor: pointer;
     }
 
+    .practice-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 18px; }
+    .practice-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: var(--bg-subtle); color: var(--text-main); border: 1px solid var(--border-color);
+      padding: 7px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; font-family: inherit;
+    }
+    .chip:hover { border-color: var(--primary); }
+    .chip.active { background: var(--primary); border-color: var(--primary); color: #ffffff; }
+    .chip-pct { font-weight: 600; opacity: 0.75; }
+    .btn-practice {
+      background: none; border: none; padding: 0; color: var(--primary); font-family: inherit;
+      font-size: 12.5px; font-weight: 700; cursor: pointer;
+    }
+    .btn-practice:hover { text-decoration: underline; }
+
     .filter-bar { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 14px; }
     @media (max-width: 768px) { .filter-bar { grid-template-columns: 1fr; } }
 
@@ -862,6 +879,11 @@
 
         <!-- 2. الكويز التكيفي -->
         <section id="page-quiz" class="hidden quiz-box">
+          <div class="card practice-bar">
+            <span class="practice-label" id="practice-label">تدرب على:</span>
+            <div id="practice-chips" class="chip-row"></div>
+          </div>
+
           <div class="ai-toast">
             <span id="toast-icon"></span>
             <span id="ai-feedback-box">اخترت لك السؤال ده عشان نطمن على مستواك.</span>
@@ -890,6 +912,7 @@
             <div class="card-header">
               <h3 class="card-title" id="bank-heading" data-i18n="navBank">بنك الأسئلة</h3>
               <button id="btn-open-add-q" onclick="openQuestionModal()" class="btn-primary hidden" data-i18n="btnAddQ">+ إضافة سؤال</button>
+              <button id="btn-practice-chapter" onclick="practiceFromBank()" class="btn-primary hidden" data-i18n="practiceThisChapter">تدرب على الفصل ده ←</button>
             </div>
             <div class="filter-bar">
               <input type="text" id="search-input" oninput="renderQuestionBank()" placeholder="ابحث في نص السؤال..." class="field-control" />
@@ -1023,7 +1046,7 @@
     let bankTimer = null;
     let currentPeriod = "week";
     let lastFeedbackType = null;
-    const quiz = { sessionId: null, question: null, next: null, result: null, selected: null, startedAt: 0, summary: null };
+    const quiz = { sessionId: null, topicId: null, question: null, next: null, result: null, selected: null, startedAt: 0, summary: null };
 
     const i18n = {
       ar: {
@@ -1103,6 +1126,14 @@
         sessionDone: (n, c, p) => `خلصت الجلسة: جاوبت ${n} سؤال، منهم ${c} صح (${p}%).`,
         sessionDoneHint: "ارجع للوحة التحكم تشوف مستواك اتغير إزاي، أو ابدأ جلسة جديدة.",
         btnNewSession: "ابدأ جلسة جديدة",
+        practiceLabel: "تدرب على:",
+        practiceAll: "كل الفصول",
+        practiceAllTitle: "مراجعة ذكية: الأسئلة من الفصول اللي محتاجة مراجعة",
+        chapterShort: "الفصل",
+        practiceShort: "تدرب",
+        practiceThisChapter: "تدرب على الفصل ده ←",
+        fbChapter: (topic, p) => p == null ? `تدريب على ${topic} — الصعوبة هتمشي مع مستواك فيه.` : `تدريب على ${topic} — مستواك فيه ${p}%، والصعوبة هتمشي معاه.`,
+        chapterDoneHint: "حليت كل أسئلة الفصل ده. جرّب فصل تاني أو ارجع للمراجعة الذكية.",
         btnEndSession: "إنهاء الجلسة",
         loading: "جاري التحميل...",
         btnSubmit: "تأكيد الإجابة",
@@ -1214,6 +1245,14 @@
         sessionDone: (n, c, p) => `Session finished: ${n} questions answered, ${c} correct (${p}%).`,
         sessionDoneHint: "Check the dashboard to see how your level changed, or start a new session.",
         btnNewSession: "Start a new session",
+        practiceLabel: "Practice:",
+        practiceAll: "All chapters",
+        practiceAllTitle: "Smart review: questions from the chapters that need it most",
+        chapterShort: "Ch",
+        practiceShort: "Practice",
+        practiceThisChapter: "Practice this chapter →",
+        fbChapter: (topic, p) => p == null ? `Practising ${topic} — the difficulty follows your level here.` : `Practising ${topic} — your level here is ${p}%, and the difficulty follows it.`,
+        chapterDoneHint: "You've answered every question in this chapter. Try another chapter or go back to smart review.",
         btnEndSession: "End session",
         loading: "Loading...",
         btnSubmit: "Submit Answer",
@@ -1400,7 +1439,7 @@
 
     function handleLogout() {
       token = null; currentUser = null; dash = null; store.clear();
-      Object.assign(quiz, { sessionId: null, question: null, next: null, result: null, selected: null, summary: null });
+      Object.assign(quiz, { sessionId: null, topicId: null, question: null, next: null, result: null, selected: null, summary: null });
       document.getElementById("search-input").value = "";
       document.getElementById("filter-topic").value = "All";
       document.getElementById("filter-difficulty").value = "All";
@@ -1473,7 +1512,10 @@
           <div class="topic-row">
             <div class="topic-meta">
               <span>${esc(topicLabel(tp.chapter_no, tp.name))}${sub}</span>
-              <span style="color: var(--primary);">${p}%</span>
+              <span style="display:flex;align-items:center;gap:12px;">
+                ${isAdmin ? "" : `<button type="button" class="btn-practice" onclick="practiceChapter(${tp.topic_id})">${esc(t.practiceShort)}</button>`}
+                <span style="color: var(--primary);">${p}%</span>
+              </span>
             </div>
             <div class="track"><div class="fill ${fillClass}" style="width: ${p}%;"></div></div>
           </div>`;
@@ -1506,7 +1548,9 @@
       document.getElementById("q-text").textContent = T().loading;
       document.getElementById("q-options").innerHTML = "";
       try {
-        const res = await api("/api/quiz/start", { method: "POST", body: { course_id: COURSE_ID } });
+        const body = { course_id: COURSE_ID };
+        if (quiz.topicId != null) body.topic_id = quiz.topicId;
+        const res = await api("/api/quiz/start", { method: "POST", body });
         quiz.sessionId = res.session_id;
         quiz.question = res.question;
         quiz.startedAt = Date.now();
@@ -1516,8 +1560,30 @@
       renderQuizQuestion();
     }
 
+    function practiceChapter(topicId) {          // topicId = null -> all chapters (smart review)
+      quiz.topicId = topicId;
+      quiz.sessionId = null;
+      showTab("quiz");
+    }
+
+    function practiceFromBank() {
+      const v = document.getElementById("filter-topic").value;
+      if (v !== "All") practiceChapter(Number(v));
+    }
+
+    function renderPracticeChips() {
+      const t = T();
+      const chips = [{ id: null, label: t.practiceAll, title: t.practiceAllTitle, pct: null }].concat(
+        topics.map((tp) => ({ id: tp.topic_id, label: `${t.chapterShort} ${tp.chapter_no}`,
+                              title: topicLabel(tp.chapter_no, tp.name), pct: topicPredicted(tp.topic_id) })));
+      document.getElementById("practice-chips").innerHTML = chips.map((c) => `
+        <button type="button" class="chip ${c.id === quiz.topicId ? "active" : ""}" title="${esc(c.title)}"
+                onclick="practiceChapter(${c.id === null ? "null" : c.id})">${esc(c.label)}${c.pct != null ? ` <span class="chip-pct">${c.pct}%</span>` : ""}</button>`).join("");
+    }
+
     function renderQuizQuestion() {
       const t = T();
+      renderPracticeChips();
       const box = document.getElementById("ai-feedback-box");
       const expl = document.getElementById("q-explanation");
       const btnSubmit = document.getElementById("btn-submit");
@@ -1530,8 +1596,9 @@
         document.getElementById("q-difficulty").className = "pill";
         document.getElementById("q-text").textContent = t.sessionDone(s.answered, s.correct, s.accuracy_pct);
         document.getElementById("q-options").innerHTML = "";
-        expl.textContent = t.sessionDoneHint; expl.classList.remove("hidden");
-        box.textContent = t.sessionDoneHint;
+        const hint = quiz.topicId != null ? t.chapterDoneHint : t.sessionDoneHint;
+        expl.textContent = hint; expl.classList.remove("hidden");
+        box.textContent = hint;
         btnSubmit.classList.add("hidden");
         btnNext.textContent = t.btnNewSession; btnNext.classList.remove("hidden");
         return;
@@ -1568,6 +1635,7 @@
 
       if (lastFeedbackType === "correct") box.textContent = t.fbCorrect(r.topic_predicted_pct);
       else if (lastFeedbackType === "wrong") box.textContent = t.fbWrong(topicName, r.topic_predicted_pct);
+      else if (quiz.topicId != null) box.textContent = t.fbChapter(topicName, topicPredicted(q.topic_id));
       else box.textContent = t.fbInitial(topicName, topicPredicted(q.topic_id));
 
       btnSubmit.textContent = t.btnSubmit;
@@ -1626,6 +1694,8 @@
     }
 
     async function loadBank() {
+      document.getElementById("btn-practice-chapter").classList.toggle("hidden",
+        currentRole === "admin" || document.getElementById("filter-topic").value === "All");
       const params = new URLSearchParams({ course_id: COURSE_ID, limit: 500 });
       const search = document.getElementById("search-input").value.trim();
       const topic = document.getElementById("filter-topic").value;
@@ -1831,6 +1901,8 @@
       set("topbar-heading", headingMap[currentTab]);
       set("ai-badge-text", t.aiBadgeText(modelLabel));
       set("btn-start-adaptive", t.btnStartAdaptive);
+      set("practice-label", t.practiceLabel);
+      renderPracticeChips();
       set("kpi-mastery-lbl", t.kpiMasteryLbl);
       set("kpi-sessions-lbl", t.kpiSessionsLbl);
       document.getElementById("search-input").placeholder = t.searchPlaceholder;

@@ -81,6 +81,7 @@ TABLES = {
           user_id     INTEGER NOT NULL REFERENCES users(user_id)     ON DELETE CASCADE,
           course_id   INTEGER NOT NULL REFERENCES courses(course_id) ON DELETE CASCADE,
           mode        TEXT NOT NULL DEFAULT 'adaptive' CHECK (mode IN ('adaptive','random')),
+          topic_id    INTEGER REFERENCES topics(topic_id) ON DELETE SET NULL,  -- set = practising one chapter only
           started_at  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
           ended_at    TEXT
         )""",

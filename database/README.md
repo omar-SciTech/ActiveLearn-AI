@@ -34,7 +34,7 @@ This calls the same `create_tables()` and `insert_data()`, then adds 30 simulate
 | enrollments | student ↔ course (many-to-many) | PK (user_id, course_id) |
 | topics | chapters of a course | PK topic_id, FK course_id |
 | questions | question bank | PK question_id, FK topic_id |
-| quiz_sessions | one practice session | PK session_id, FK user_id, course_id |
+| quiz_sessions | one practice session (all chapters, or one chapter when topic_id is set) | PK session_id, FK user_id, course_id, topic_id |
 | attempts | every answer (chosen option, correct?, time) | PK attempt_id, FK session_id, user_id, question_id |
 | topic_mastery | AI prediction per student and chapter | PK (user_id, topic_id) |
 

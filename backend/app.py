@@ -80,7 +80,8 @@ INSTRUCTOR_KEY = os.environ.get("INSTRUCTOR_SIGNUP_KEY")   # set on the hosted s
 
 
 def ensure_schema():
-    """Upgrades an older database in place: adds users.user_code (sign-in code) and fills it for old rows."""
+    """Upgrades an older database in place: adds users.user_code (sign-in code) and fills it for old rows,
+    and quiz_sessions.topic_id (chapter practice)."""
     if not os.path.exists(DB_PATH):
         return
     with sqlite3.connect(DB_PATH) as c:
@@ -93,6 +94,8 @@ def ensure_schema():
         for uid, role in c.execute("SELECT user_id, role FROM users WHERE user_code IS NULL").fetchall():
             code = f"DR{uid:03d}" if role == "instructor" else f"2026{uid:04d}"
             c.execute("UPDATE users SET user_code=? WHERE user_id=?", (code, uid))
+        if "topic_id" not in [r[1] for r in c.execute("PRAGMA table_info(quiz_sessions)")]:
+            c.execute("ALTER TABLE quiz_sessions ADD COLUMN topic_id INTEGER REFERENCES topics(topic_id) ON DELETE SET NULL")
 
 
 ensure_schema()
@@ -257,16 +260,18 @@ def update_mastery_for_user(uid, course_id):
             (uid, t, p, now))
     return m
 
-def pick_next(uid, course_id, session_id, mode):
+def pick_next(uid, course_id, session_id, mode, topic_id=None):
     """Adaptive: pick a chapter at random with weight (1 - predicted)^2, so weak chapters come up most often
     but every chapter is still practised; never more than 3 questions in a row from one chapter;
-    difficulty drawn with weights easy (1-p)^2, medium 2p(1-p), hard p^2; no question repeats in a session."""
+    difficulty drawn with weights easy (1-p)^2, medium 2p(1-p), hard p^2; no question repeats in a session.
+    Chapter practice (topic_id set): every question comes from that chapter, with the same difficulty draw
+    based on the student's predicted level in it, so it gets harder as the student improves."""
     tps = q("SELECT topic_id FROM topics WHERE course_id=?", (course_id,))
     tids = [t["topic_id"] for t in tps]
     seen = {r["question_id"] for r in q("SELECT question_id FROM attempts WHERE session_id=?", (session_id,))}
     cand = q("""SELECT qu.*, t.chapter_no, t.name AS topic FROM questions qu JOIN topics t USING(topic_id)
                 WHERE t.course_id=? AND qu.is_active=1""", (course_id,))
-    cand = [c for c in cand if c["question_id"] not in seen]
+    cand = [c for c in cand if c["question_id"] not in seen and (topic_id is None or c["topic_id"] == topic_id)]
     if not cand: return None
     if mode == "random":
         import random; return random.choice(cand)
@@ -276,7 +281,7 @@ def pick_next(uid, course_id, session_id, mode):
     # weaker chapter -> more questions, but every chapter keeps a chance (weight = (1 - p)^2)
     recent = [r["topic_id"] for r in q("""SELECT qu.topic_id FROM attempts a JOIN questions qu USING(question_id)
                                            WHERE a.session_id=? ORDER BY a.attempt_id DESC LIMIT 3""", (session_id,))]
-    if len(recent) == 3 and len(set(recent)) == 1 and len(avail) > 1:
+    if topic_id is None and len(recent) == 3 and len(set(recent)) == 1 and len(avail) > 1:
         avail = [t for t in avail if t != recent[0]]        # 3 in a row from one chapter -> switch chapter
     topic = random.choices(avail, weights=[(1 - m[t]) ** 2 + 1e-6 for t in avail])[0]
     # difficulty is also a weighted draw: low level -> mostly easy, high level -> mostly hard
@@ -293,12 +298,18 @@ def pick_next(uid, course_id, session_id, mode):
 def quiz_start():
     d = request.get_json(force=True)
     cid, mode = d.get("course_id"), d.get("mode", "adaptive")
+    tid = d.get("topic_id")                                    # optional: practise one chapter only
     if mode not in ("adaptive", "random"): return err("Invalid mode")
     if not q("SELECT 1 FROM courses WHERE course_id=?", (cid,), one=True): return err("Course not found", 404)
+    topic = None
+    if tid is not None:
+        topic = q("SELECT topic_id, chapter_no, name FROM topics WHERE topic_id=? AND course_id=?", (tid, cid), one=True)
+        if not topic: return err("Chapter not found", 404)
+        tid, mode = topic["topic_id"], "adaptive"
     run("INSERT OR IGNORE INTO enrollments(user_id,course_id) VALUES(?,?)", (g.uid, cid))
-    sid = run("INSERT INTO quiz_sessions(user_id,course_id,mode) VALUES(?,?,?)", (g.uid, cid, mode))
-    nq = pick_next(g.uid, cid, sid, mode)
-    return jsonify(session_id=sid, question=public_q(nq) if nq else None), 201
+    sid = run("INSERT INTO quiz_sessions(user_id,course_id,mode,topic_id) VALUES(?,?,?,?)", (g.uid, cid, mode, tid))
+    nq = pick_next(g.uid, cid, sid, mode, tid)
+    return jsonify(session_id=sid, topic=topic, question=public_q(nq) if nq else None), 201
 
 def own_session(sid):
     s = q("SELECT * FROM quiz_sessions WHERE session_id=? AND user_id=?", (sid, g.uid), one=True)
@@ -309,7 +320,7 @@ def own_session(sid):
 def quiz_next(sid):
     s = own_session(sid)
     if not s: return err("Session not found", 404)
-    nq = pick_next(g.uid, s["course_id"], sid, s["mode"])
+    nq = pick_next(g.uid, s["course_id"], sid, s["mode"], s.get("topic_id"))
     return jsonify(question=public_q(nq) if nq else None)
 
 @app.post("/api/quiz/<int:sid>/answer")
@@ -327,7 +338,7 @@ def quiz_answer(sid):
     ok = int(opt == ques["correct_option"])
     run("INSERT INTO attempts(session_id,user_id,question_id,selected_option,is_correct,time_taken_sec) VALUES(?,?,?,?,?,?)",
         (sid, g.uid, ques["question_id"], opt, ok, d.get("time_taken_sec")))
-    nq = pick_next(g.uid, s["course_id"], sid, s["mode"])
+    nq = pick_next(g.uid, s["course_id"], sid, s["mode"], s.get("topic_id"))
     m = q("SELECT ROUND(100.0*p_correct,1) p FROM topic_mastery WHERE user_id=? AND topic_id=?", (g.uid, ques["topic_id"]), one=True)
     return jsonify(is_correct=bool(ok), correct_option=ques["correct_option"], explanation=ques["explanation"],
                    topic_predicted_pct=m["p"] if m else None, next_question=public_q(nq) if nq else None)

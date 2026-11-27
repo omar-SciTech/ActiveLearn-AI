@@ -16,7 +16,7 @@ A study platform that adapts to the student. Instead of random questions, the sy
 | enrollments | which student is in which course (many-to-many junction) |
 | topics | chapters of a course |
 | questions | question bank: 4 options, correct answer, difficulty, explanation |
-| quiz_sessions | each practice session (adaptive or random) |
+| quiz_sessions | each practice session (adaptive or random; topic_id set = one-chapter practice) |
 | attempts | every answer: chosen option, correct or not, time taken |
 | topic_mastery | predicted probability of a correct answer per student per topic (written by the AI model) |
 
@@ -47,7 +47,7 @@ Demo student: code `20260002`, password `password123`. Instructors create their 
 | POST /api/courses/:id/enroll | student | join course |
 | GET /api/questions?search=&chapter=&difficulty=&course_id= | all | **search and filter** the question bank |
 | POST /api/questions | instructor | add a question |
-| POST /api/quiz/start `{course_id, mode}` | student | start session, returns first question |
+| POST /api/quiz/start `{course_id, mode, topic_id?}` | student | start session, returns first question; with `topic_id` every question comes from that chapter |
 | POST /api/quiz/:sid/answer `{question_id, selected_option, time_taken_sec}` | student | saves attempt, returns correct/wrong + explanation + next question |
 | GET /api/quiz/:sid/next, POST /api/quiz/:sid/end | student | next question / finish and get score |
 | GET /api/reports/student/dashboard | student | questions solved, average accuracy, sessions this week, knowledge per chapter, weekly activity, "review chapter" recommendation |
