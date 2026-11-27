@@ -17,3 +17,6 @@ Thumbs.db
 
 # Local secrets
 .env
+
+# Built by database/create_database.py (open it in DB Browser for SQLite)
+database/activelearn.db

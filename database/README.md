@@ -1,27 +1,30 @@
 # Database part
 
+The whole database is written in Python with the built-in `sqlite3` module.
+
 | File | What it is |
 |---|---|
-| `schema.sql` | Creates the 8 tables (CREATE TABLE with primary keys, foreign keys, CHECK and UNIQUE constraints) |
-| `data.sql` | INSERT statements: 4 users, the IS201 course, the 6 chapters of the course book, 60 questions (10 per chapter, each with 4 options, the correct answer, difficulty and an explanation) |
-| `check.sql` | Queries to check the database after building it |
+| `create_database.py` | Builds the database: `create_tables()` creates the 8 tables (primary keys, foreign keys, CHECK and UNIQUE constraints), `insert_data()` inserts 4 users, the IS201 course, the 6 chapters of the course book and 60 questions (10 per chapter, each with 4 options, the correct answer, difficulty and an explanation), and `check()` prints row counts and tests the relations |
 | `simulate_students.py` | Generates **simulated** students and answers for testing (used by `backend/seed.py` and the model) |
 | `erd.png` / `erd.svg` / `erd.dot` | Entity Relationship Diagram |
 
-## Build it in DB Browser for SQLite (what we show in the discussion)
-1. **New Database** → save as `activelearn.db` (cancel the "Edit table" window).
-2. Tab **Execute SQL** → open `schema.sql` → **Run** (Ctrl+Enter / F5).
-3. Open `data.sql` → **Run**.
-4. **Write Changes** (Ctrl+S).
-5. Tab **Browse Data** → choose a table to see the rows.
-6. Open `check.sql` → run it to see the counts and test the relations.
+## Build it
+```
+cd database
+python create_database.py
+```
+This creates `database/activelearn.db` and prints the checks:
+row counts, foreign keys, questions per chapter and difficulty, correct answers spread over A–D,
+and a CHECK-constraint test (an invalid difficulty is rejected).
 
-## Build it with Python (with simulated answers so reports have data)
+Then open `activelearn.db` in **DB Browser for SQLite** → tab **Browse Data** → choose a table to see the rows.
+
+## Build the app's database (with simulated answers so reports have data)
 ```
 cd backend
 python seed.py
 ```
-This runs the same `schema.sql` + `data.sql`, then adds 30 simulated students and simulated answers for everyone.
+This calls the same `create_tables()` and `insert_data()`, then adds 30 simulated students and simulated answers for everyone.
 
 ## Tables
 | Table | Purpose | Key |

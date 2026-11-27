@@ -5,7 +5,7 @@ A study platform that adapts to the student. Instead of random questions, the sy
 
 ## 2. Tech stack
 - Python 3 + Flask (REST API, JSON)
-- SQLite database (`activelearn.db`, one file, created from `../database/schema.sql` + `../database/data.sql`)
+- SQLite database (`activelearn.db`, one file, created by `../database/create_database.py`)
 - Passwords hashed (werkzeug), login returns a signed token (itsdangerous)
 
 ## 3. Database (8 tables – see ../database/README.md)
@@ -30,7 +30,7 @@ Next-question rule: pick a chapter at random with weight (1 − predicted)² →
 ## 5. Run it
 ```
 pip install -r requirements.txt
-python seed.py        # builds activelearn.db from ../database/schema.sql + data.sql + simulated answers
+python seed.py        # builds activelearn.db with ../database/create_database.py + simulated answers
 python app.py         # app + API on http://localhost:5000 (builds the DB on first run)
 python test_api.py    # automated test of every endpoint on a temporary copy (prints ALL OK)
 ```

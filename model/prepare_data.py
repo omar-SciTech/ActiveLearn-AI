@@ -1,7 +1,7 @@
 """Prepares the answer sequences for the models.
 
   python prepare_data.py assist   -> real data: ASSISTments 2009-2010 skill builder (corrected, collapsed)
-  python prepare_data.py is201    -> IS201: simulated students on our own question bank (database/data.sql)
+  python prepare_data.py is201    -> IS201: simulated students on our own question bank (database/create_database.py)
   python prepare_data.py is201 --from-export ../analysis/exports/attempts_sequences.csv
                                   -> IS201 from REAL app answers (once students have used the app)
 
@@ -81,9 +81,11 @@ def prepare_assist():
 
 
 def prepare_is201(n_students, export_csv=None):
+    sys.path.insert(0, DB_DIR)
+    from create_database import create_tables, insert_data
     con = sqlite3.connect(":memory:")
-    for f in ("schema.sql", "data.sql"):
-        con.executescript(open(os.path.join(DB_DIR, f), encoding="utf-8").read())
+    create_tables(con)
+    insert_data(con)
     topics = con.execute("SELECT topic_id, chapter_no, name FROM topics WHERE course_id=1 ORDER BY chapter_no").fetchall()
     tmap = {str(t[0]): i for i, t in enumerate(topics)}        # topic_id -> skill index
     qtopic = {str(q): t for q, t in con.execute(

@@ -1,4 +1,4 @@
-import os, sqlite3
+import os, sqlite3, sys
 from datetime import datetime, timedelta
 from functools import wraps
 from flask import Flask, g, jsonify, request, send_from_directory
@@ -7,7 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from mastery import predict_mastery
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB_DIR = os.path.join(os.path.dirname(BASE), "database")        # schema.sql, data.sql live here
+DB_DIR = os.path.join(os.path.dirname(BASE), "database")        # create_database.py lives here
+sys.path.insert(0, DB_DIR)
 DB_PATH = os.environ.get("DB_PATH", os.path.join(BASE, "activelearn.db"))
 FRONTEND = os.path.join(os.path.dirname(BASE), "frontend")
 SECRET = os.environ.get("SECRET_KEY", "change-me-in-production")
@@ -40,9 +41,10 @@ def close_db(_):
     if d: d.close()
 
 def init_db():
-    """Creates the tables if they do not exist (database/schema.sql). Run seed.py for the demo data."""
+    """Creates the tables if they do not exist (database/create_database.py). Run seed.py for the demo data."""
+    from create_database import create_tables
     with sqlite3.connect(DB_PATH) as c:
-        c.executescript(open(os.path.join(DB_DIR, "schema.sql"), encoding="utf-8").read())
+        create_tables(c)
 
 def q(sql, args=(), one=False):
     rows = db().execute(sql, args).fetchall()

@@ -1,7 +1,7 @@
 """Builds the demo database (backend/activelearn.db) in 3 steps:
 
-  1) database/schema.sql  -> creates the 8 tables            (same file you run in DB Browser)
-  2) database/data.sql    -> course, 6 chapters, 60 questions, users  (same file you run in DB Browser)
+  1) database/create_database.py: create_tables() -> the 8 tables
+  2) database/create_database.py: insert_data()   -> users, course, 6 chapters, 60 questions
   3) simulated history    -> 30 simulated students + answers for everyone, so reports and the
                              model have data to show (clearly marked as simulated)
 Then it fills topic_mastery with the model's predictions for every student.
@@ -13,6 +13,7 @@ from app import DB_PATH, BASE, DB_DIR, update_mastery_for_user
 
 sys.path.insert(0, DB_DIR)
 from simulate_students import add_students, add_history   # noqa: E402
+from create_database import create_tables, insert_data    # noqa: E402
 
 N_SIM_STUDENTS = 30
 
@@ -22,8 +23,8 @@ def main(reset=True):
         os.remove(DB_PATH)
     con = sqlite3.connect(DB_PATH)
     con.execute("PRAGMA foreign_keys=ON")
-    for f in ("schema.sql", "data.sql"):
-        con.executescript(open(os.path.join(DB_DIR, f), encoding="utf-8").read())
+    create_tables(con)
+    insert_data(con)
     pw_hash = con.execute("SELECT password_hash FROM users WHERE user_id=2").fetchone()[0]
     sim_ids = add_students(con, N_SIM_STUDENTS, pw_hash)
     students = [r[0] for r in con.execute("SELECT user_id FROM users WHERE role='student' ORDER BY user_id")]

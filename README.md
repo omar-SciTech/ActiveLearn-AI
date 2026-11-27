@@ -72,7 +72,7 @@ ActiveLearn_AI/
 ├── run.bat          double-click to start
 ├── frontend/        index.html – the interface (served by the backend)
 ├── backend/         Flask API: app.py, mastery.py (AI hook), seed.py (demo DB), test_api.py
-├── database/        schema.sql (8 tables), data.sql (6 chapters + 60 questions), check.sql, ERD, student simulator
+├── database/        create_database.py (8 tables + 6 chapters + 60 questions, in Python), ERD, student simulator
 ├── analysis/        reports.sql (13 reports), make_charts.py → charts/, export_for_ai.py
 ├── model/           PyTorch: dkt.py (DKT, DKT-Q, SAKT), prepare_data.py, train.py, predictor.py, results/, saved/
 │                    predictor_np.py + export_numpy.py: the same model without PyTorch (for hosting)
@@ -94,14 +94,14 @@ student answers a question (frontend)
 ## Database
 ![ERD](database/erd.png)
 
-Open `backend/activelearn.db` in **DB Browser for SQLite**, or build it from the code: run `database/schema.sql`
-then `database/data.sql` (steps in [`database/README.md`](database/README.md)).
+The database is written in Python (`sqlite3`). Build it with `python database/create_database.py`, then open
+`database/activelearn.db` in **DB Browser for SQLite** (details in [`database/README.md`](database/README.md)).
 
 ## Course requirements
 | Requirement | Where |
 |---|---|
-| At least 3 tables in a real database | 8 tables – `database/schema.sql` |
-| Database coded by the team | `database/schema.sql` + `database/data.sql`, runs in DB Browser for SQLite |
+| At least 3 tables in a real database | 8 tables – `database/create_database.py` |
+| Database coded by the team | `database/create_database.py` (Python + sqlite3), opens in DB Browser for SQLite |
 | Reports (best / worst, day / week / month) | `analysis/reports.sql` (13 reports), report endpoints, `analysis/charts/` |
 | Search and filter | `GET /api/questions?search=&chapter=&difficulty=`, report R13 |
 | GUI (Flask) | `frontend/index.html` + Flask API |
@@ -111,7 +111,7 @@ then `database/data.sql` (steps in [`database/README.md`](database/README.md)).
 ## Data: what is real and what is simulated
 - **ASSISTments 2009-2010** (real students): used to train and test the models. The ~60 MB CSV is not included;
   download it from the [ASSISTments site](https://sites.google.com/site/assistmentsdata/home/2009-2010-assistment-data/skill-builder-data-2009-2010).
-- **IS201 chapters and 60 questions**: written by the team in `database/data.sql`.
+- **IS201 chapters and 60 questions**: written by the team in `database/create_database.py`.
 - **Answers in the demo database**: **simulated** students named "Sim Student …" (`database/simulate_students.py`),
   because the app has no real users yet. The app's IS201 model is trained on these and should be retrained
   once real students use it (`model/README.md`).
