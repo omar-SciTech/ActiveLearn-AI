@@ -35,12 +35,16 @@ Training curves and all metrics: [`model/results/`](model/results). Details: [`m
 | Sign in | Student dashboard |
 |---|---|
 | ![Sign in](docs/screenshots/01_sign_in.jpg) | ![Student dashboard](docs/screenshots/03_student_dashboard.jpg) |
-| **Adaptive quiz with instant feedback** | **Personal reports** |
-| ![Adaptive quiz](docs/screenshots/04_adaptive_quiz.jpg) | ![Reports](docs/screenshots/05_reports.jpg) |
-| **Instructor: class dashboard** | **Instructor: question bank** |
-| ![Instructor dashboard](docs/screenshots/07_instructor_dashboard.jpg) | ![Question bank](docs/screenshots/08_instructor_question_bank.jpg) |
-| **Sign up** | **Arabic interface, light theme** |
-| ![Sign up](docs/screenshots/02_sign_up.jpg) | ![Arabic](docs/screenshots/06_arabic_light.jpg) |
+| **Adaptive quiz with instant feedback** | **Chapter practice: one chapter, difficulty follows the level** |
+| ![Adaptive quiz](docs/screenshots/04_adaptive_quiz.jpg) | ![Chapter practice](docs/screenshots/09_chapter_practice.jpg) |
+| **Personal reports** | **Anonymous feedback & complaints** |
+| ![Reports](docs/screenshots/05_reports.jpg) | ![Feedback form](docs/screenshots/10_feedback_form.jpg) |
+| **Instructor: class dashboard** | **Instructor: feedback inbox** |
+| ![Instructor dashboard](docs/screenshots/07_instructor_dashboard.jpg) | ![Feedback inbox](docs/screenshots/11_instructor_feedback_inbox.jpg) |
+| **Instructor: question bank** | **Arabic interface, light theme** |
+| ![Question bank](docs/screenshots/08_instructor_question_bank.jpg) | ![Arabic](docs/screenshots/06_arabic_light.jpg) |
+| **Sign up** | |
+| ![Sign up](docs/screenshots/02_sign_up.jpg) | |
 
 ## Features
 - **Students:** dashboard with AI mastery per chapter, adaptive quiz with explanations, chapter practice
